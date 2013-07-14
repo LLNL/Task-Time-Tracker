@@ -1,0 +1,12 @@
+div { 
+    font: Helvetica Neue;
+    padding: 1px
+}
+
+table {
+    width: 100px;
+    padding: 0;
+    border-width: 0;
+    border: dotted thin;
+    background: #fca44c;
+}
