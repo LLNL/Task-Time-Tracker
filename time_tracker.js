@@ -1,14 +1,10 @@
 var IntervalID = 0,
     CurrentTask = "",
-    Timer,
-    count = 0,
-    TaskName,
-    Task;
+    count = 0;
 
 function StartTimer ( event ) {
-    var TaskArr_JSON,
-        TaskArr = {},
-        TaskName = $(this).attr("id");
+    var TaskName = $(this).attr("id"),
+        Timer;
 
     if (IntervalID != 0)
     {
@@ -29,8 +25,15 @@ function StartTimer ( event ) {
         // and record which task is the current one.
         Timer = $(this).find( "#timer" );
         IntervalID = setInterval(function () {
-            TaskArr_JSON = localStorage.getItem("TaskArr");
-            TaskArr = JSON.parse(TaskArr_JSON);
+            var TaskArr_JSON = "",
+                TaskArr      = {},
+                TaskTime;
+
+            if ( localStorage.getItem("TaskArr") )
+            {
+                TaskArr_JSON = localStorage.getItem("TaskArr");
+                TaskArr      = JSON.parse(TaskArr_JSON);
+            }
 
             TaskTime = parseInt(TaskArr[TaskName]);
             TaskTime++;
@@ -47,7 +50,8 @@ function StartTimer ( event ) {
 }
 
 function AddTask ( TaskName, Timer ) {
-    var TaskArr_JSON,
+    var Task,
+        TaskArr_JSON,
         TaskArr = {};
 
     if ( TaskName != "" )
@@ -65,26 +69,35 @@ function AddTask ( TaskName, Timer ) {
             localStorage.setItem("TaskArr", TaskArr_JSON);
         }
 
-        Task = $( '<div id="' + TaskName + '">' +
-                  '  <table>'            +
-                  '      <tr>'           +
-                  '          <td>' + TaskName + '</td>' +
-                  '      </tr>'          +
-                  '      <tr>'           +
-                  '          <td id="timer">' + Timer + '</td>' +
-                  '      </tr>'          +
-                  '  </table>'           +
-                  '</div>' );
-        Task.click ( StartTimer );
-        $( "#TaskList" ).append( Task );
+
+        if ( $("#" + TaskName).length != 0 )
+        {
+            alert ( "That task already exists!" );
+        }
+        else
+        {
+            Task = $( '<div id="' + TaskName + '">' +
+                      '  <table>'            +
+                      '      <tr>'           +
+                      '          <td>' + TaskName + '</td>' +
+                      '      </tr>'          +
+                      '      <tr>'           +
+                      '          <td id="timer">' + Timer + '</td>' +
+                      '      </tr>'          +
+                      '  </table>'           +
+                      '</div>' );
+            Task.click ( StartTimer );
+            $( "#TaskList" ).append( Task );
+        }
     }
 } 
 
 function SubmitTask ( event ) {
+    var TaskName = $( "#TaskName" ).val();
+
     event.preventDefault();
     event.stopPropagation();
 
-    TaskName = $( "#TaskName" ).val();
     AddTask ( TaskName, 0 );
 } 
 
