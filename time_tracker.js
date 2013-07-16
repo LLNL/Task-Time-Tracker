@@ -3,8 +3,8 @@ var IntervalID = 0,
     count = 0,
     TaskName,
     Task,
-    CurrentTask = "",
     TaskDict = {};
+window.CurrentTask = "";
 
 function StartTimer ( event ) {
     if (IntervalID != 0)
@@ -13,11 +13,11 @@ function StartTimer ( event ) {
         clearInterval( IntervalID );
     }
     
-    if ( $(this).id == CurrentTask )
+    if ( $(this).attr("id") == window.CurrentTask )
     {
         //  User clicked on the current task.  Just stop the timer,
         //  clear the current task, and be done.
-        CurrentTask = "";
+        window.CurrentTask = "";
     }
     else
     {
@@ -29,6 +29,8 @@ function StartTimer ( event ) {
             count++;
             Timer.text(count);
         }, 1000);
+
+        window.CurrentTask = $(this).attr("id");
     }
 }
 

@@ -1,5 +1,7 @@
 div { 
-    font: Helvetica Neue;
+    font-family: Helvetica Neue, sans-serif;
+    font-weight: 100;
+    font-size: xx-large;
     padding: 1px
 }
 
