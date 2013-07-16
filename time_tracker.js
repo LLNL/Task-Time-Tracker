@@ -6,6 +6,10 @@ var IntervalID = 0,
     Task;
 
 function StartTimer ( event ) {
+    var TaskArr_JSON,
+        TaskArr = {},
+        TaskName = $(this).attr("id");
+
     if (IntervalID != 0)
     {
         //  Stop the currently running timer
@@ -25,9 +29,16 @@ function StartTimer ( event ) {
         // and record which task is the current one.
         Timer = $(this).find( "#timer" );
         IntervalID = setInterval(function () {
-            count = parseInt(Timer.text());
-            count++;
-            Timer.text(count);
+            TaskArr_JSON = localStorage.getItem("TaskArr");
+            TaskArr = JSON.parse(TaskArr_JSON);
+
+            TaskTime = parseInt(TaskArr[TaskName]);
+            TaskTime++;
+            Timer.text(TaskTime);
+
+            TaskArr[TaskName] = TaskTime.toString();
+            TaskArr_JSON = JSON.stringify(TaskArr);
+            localStorage.setItem("TaskArr", TaskArr_JSON);
         }, 1000);
 
         CurrentTask = $(this).attr("id");
@@ -35,15 +46,29 @@ function StartTimer ( event ) {
     }
 }
 
-function AddTask ( TaskName ) {
-    if ( TaskName != "" ) {
+function AddTask ( TaskName, Timer ) {
+    var TaskArr_JSON,
+        TaskArr = {};
+
+    if ( TaskName != "" )
+    {
+        if ( localStorage.getItem("TaskArr") )
+        {
+            TaskArr_JSON = localStorage.getItem("TaskArr");
+            TaskArr = JSON.parse(TaskArr_JSON);
+        }
+
+        TaskArr[TaskName] = "0";
+        TaskArr_JSON = JSON.stringify(TaskArr);
+        localStorage.setItem("TaskArr", TaskArr_JSON);
+
         Task = $( '<div id="' + TaskName + '">' +
                   '  <table>'            +
                   '      <tr>'           +
                   '          <td>' + TaskName + '</td>' +
                   '      </tr>'          +
                   '      <tr>'           +
-                  '          <td id="timer">0</td>' +
+                  '          <td id="timer">' + Timer + '</td>' +
                   '      </tr>'          +
                   '  </table>'           +
                   '</div>' );
@@ -57,14 +82,23 @@ function SubmitTask ( event ) {
     event.stopPropagation();
 
     TaskName = $( "#TaskName" ).val();
-    AddTask ( TaskName );
+    AddTask ( TaskName, 0 );
 } 
 
 $(document).ready(function () {
+    var TaskArr_JSON,
+        TaskArr;
+
     $( "#TaskForm" ).submit( SubmitTask );
-    if ( localStorage.CurrentTask )
+
+    if ( localStorage.getItem("TaskArr") )
     {
-        AddTask ( localStorage.CurrentTask );
+        TaskArr_JSON = localStorage.getItem("TaskArr");
+        TaskArr = JSON.parse(TaskArr_JSON);
+        for ( var key in TaskArr )
+        {
+            AddTask ( key, TaskArr[key] );
+        }
     }
 });
 
