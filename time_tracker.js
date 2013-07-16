@@ -58,9 +58,12 @@ function AddTask ( TaskName, Timer ) {
             TaskArr = JSON.parse(TaskArr_JSON);
         }
 
-        TaskArr[TaskName] = "0";
-        TaskArr_JSON = JSON.stringify(TaskArr);
-        localStorage.setItem("TaskArr", TaskArr_JSON);
+        if ( ! (TaskName in TaskArr) )
+        {
+            TaskArr[TaskName] = Timer;
+            TaskArr_JSON = JSON.stringify(TaskArr);
+            localStorage.setItem("TaskArr", TaskArr_JSON);
+        }
 
         Task = $( '<div id="' + TaskName + '">' +
                   '  <table>'            +
