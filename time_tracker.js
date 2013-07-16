@@ -1,10 +1,9 @@
 var IntervalID = 0,
+    CurrentTask = "",
     Timer,
     count = 0,
     TaskName,
-    Task,
-    TaskDict = {};
-window.CurrentTask = "";
+    Task;
 
 function StartTimer ( event ) {
     if (IntervalID != 0)
@@ -13,11 +12,12 @@ function StartTimer ( event ) {
         clearInterval( IntervalID );
     }
     
-    if ( $(this).attr("id") == window.CurrentTask )
+    if ( $(this).attr("id") == CurrentTask )
     {
         //  User clicked on the current task.  Just stop the timer,
         //  clear the current task, and be done.
-        window.CurrentTask = "";
+        CurrentTask = "";
+        localStorage.CurrentTask = CurrentTask;
     }
     else
     {
@@ -30,14 +30,12 @@ function StartTimer ( event ) {
             Timer.text(count);
         }, 1000);
 
-        window.CurrentTask = $(this).attr("id");
+        CurrentTask = $(this).attr("id");
+        localStorage.CurrentTask = CurrentTask;
     }
 }
 
-function AddTask ( event ) {
-    event.preventDefault();
-    event.stopPropagation();
-    TaskName = $( "#TaskName" ).val();
+function AddTask ( TaskName ) {
     if ( TaskName != "" ) {
         Task = $( '<div id="' + TaskName + '">' +
                   '  <table>'            +
@@ -54,8 +52,20 @@ function AddTask ( event ) {
     }
 } 
 
+function SubmitTask ( event ) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    TaskName = $( "#TaskName" ).val();
+    AddTask ( TaskName );
+} 
+
 $(document).ready(function () {
-    $( "#TaskForm" ).submit( AddTask );
+    $( "#TaskForm" ).submit( SubmitTask );
+    if ( localStorage.CurrentTask )
+    {
+        AddTask ( localStorage.CurrentTask );
+    }
 });
 
 //
