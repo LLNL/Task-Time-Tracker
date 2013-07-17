@@ -70,6 +70,16 @@ function StartTimer ( event ) {
     }
 }
 
+function RemoveTask ( event ) {
+    var $this     = $(this),
+        ID        = $this.attr("id"),
+        TaskDelim = ID.indexOf('_'),
+        TaskName = ID.substring(0,TaskDelim);
+
+    console.log(TaskName);
+
+}
+
 function AddTask ( TaskName, Timer ) {
     var Task,
         TaskArr_JSON,
@@ -92,17 +102,27 @@ function AddTask ( TaskName, Timer ) {
         }
         else
         {
-            Task = $( '<div id="' + TaskName + '">' +
+            CloseButton = $( '<div id="' + TaskName + '_remove">'   +
+                             '&#9746;</div>' );
+            Task = $( '<div id="' + TaskName + '" class="task">'    +
                       '  <table>'            +
                       '      <tr>'           +
-                      '          <td>' + TaskName + '</td>' +
+                      '          <td>' + TaskName + '</td>'         +
                       '      </tr>'          +
                       '      <tr>'           +
                       '          <td id="timer">' + Timer + '</td>' +
                       '      </tr>'          +
                       '  </table>'           +
                       '</div>' );
+
+            //
+            //  Add click handlers.
+            CloseButton.click ( RemoveTask );
             Task.click ( StartTimer );
+
+            //
+            //  Add to the DOM.
+            $( "#TaskList" ).append( CloseButton );
             $( "#TaskList" ).append( Task );
         }
     }
