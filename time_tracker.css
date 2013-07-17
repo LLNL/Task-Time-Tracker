@@ -20,6 +20,6 @@ table {
     padding: 0px;
     padding-top: 10px;
     border-width: 0px;
-    border: dotted thin;
+    border: none;
     background: #fca44c;
 }
