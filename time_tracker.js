@@ -1,6 +1,4 @@
-var IntervalID = 0,
-    CurrentTask = "",
-    count = 0;
+var IntervalID = 0;
 
 //------------------------------------------------------------------------------
 //
@@ -30,26 +28,27 @@ function SaveTaskArr ( TaskArr ) {
 
 function StartTimer ( event ) {
     var TaskName = $(this).attr("id"),
+        $this    = $(this),
         Timer;
 
     if (IntervalID != 0)
     {
         //  Stop the currently running timer
         clearInterval( IntervalID );
+        IntervalID = 0;
     }
     
-    if ( $(this).attr("id") == CurrentTask )
+    if ( $this.attr("id") == localStorage.CurrentTask )
     {
         //  User clicked on the current task.  Just stop the timer,
         //  clear the current task, and be done.
-        CurrentTask = "";
-        localStorage.CurrentTask = CurrentTask;
+        localStorage.CurrentTask = "";
     }
     else
     {
         // User clicked on a task other than the current task.  Start the timer
         // and record which task is the current one.
-        Timer = $(this).find( "#timer" );
+        Timer = $this.find( "#timer" );
         IntervalID = setInterval(function () {
             var TaskArr_JSON = "",
                 TaskArr      = {},
@@ -65,18 +64,37 @@ function StartTimer ( event ) {
             SaveTaskArr ( TaskArr );
         }, 1000);
 
-        CurrentTask = $(this).attr("id");
-        localStorage.CurrentTask = CurrentTask;
+        localStorage.CurrentTask = $this.attr("id");
     }
 }
 
 function RemoveTask ( event ) {
     var $this     = $(this),
         ID        = $this.attr("id"),
+        TaskArr,
         TaskDelim = ID.indexOf('_'),
         TaskName = ID.substring(0,TaskDelim);
 
-    console.log(TaskName);
+    //
+    //  Remove the Task from DOM storage.
+    TaskArr = RetrieveTaskArr();
+    delete TaskArr[TaskName];
+    SaveTaskArr( TaskArr );
+
+    if ( localStorage.CurrentTask == TaskName )
+    {
+        //
+        //  If the task we're removing is the CurrentTask,
+        //  stop the timer and clear the related IntervalID.
+        clearInterval( IntervalID );
+        IntervalID = 0;
+        localStorage.CurrentTask = "";
+    }
+
+    //
+    //  Remove the task and it's close target from the DOM.
+    $( "#" + ID ).remove();
+    $( "#" + TaskName ).remove();
 
 }
 
