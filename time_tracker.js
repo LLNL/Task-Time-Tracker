@@ -121,7 +121,7 @@ function AddTask ( TaskName, Timer ) {
         else
         {
             CloseButton = $( '<div id="' + TaskName + '_remove">'   +
-                             '&#9746;</div>' );
+                             '&otimes;</div>' );
             Task = $( '<div id="' + TaskName + '" class="task">'    +
                       '  <table>'            +
                       '      <tr>'           +
