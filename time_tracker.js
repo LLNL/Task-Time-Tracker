@@ -72,7 +72,7 @@ function RemoveTask ( event ) {
     var $this     = $(this),
         ID        = $this.attr("id"),
         TaskArr,
-        TaskDelim = ID.indexOf('_'),
+        TaskDelim = ID.lastIndexOf('_'),
         TaskName = ID.substring(0,TaskDelim);
 
     //
