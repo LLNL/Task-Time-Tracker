@@ -1,14 +1,25 @@
-.task { 
+.main_task_div {
+    position: relative;
+    width: 100%;
+}
+.close_task_div {
+    position: absolute;
+    top: 0px;
+    left: 3px;
+    width: 15px;
+}
+.task_div { 
     font-family: Helvetica Neue, sans-serif;
     font-weight: 100;
     font-size: xx-large;
-    padding: 1px
+    padding: 1px;
 }
 
 table {
     width: 100px;
-    padding: 0;
-    border-width: 0;
+    padding: 0px;
+    padding-top: 10px;
+    border-width: 0px;
     border: dotted thin;
     background: #fca44c;
 }

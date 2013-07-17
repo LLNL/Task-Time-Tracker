@@ -92,14 +92,15 @@ function RemoveTask ( event ) {
     }
 
     //
-    //  Remove the task and it's close target from the DOM.
-    $( "#" + ID ).remove();
-    $( "#" + TaskName ).remove();
+    //  By removing the parent DIV, we remove the entire task from the DOM.
+    $this.parent().remove();
 
 }
 
 function AddTask ( TaskName, Timer ) {
-    var Task,
+    var CloseButton,
+        MainTaskDiv,
+        Task,
         TaskArr_JSON,
         TaskArr = {};
 
@@ -120,9 +121,10 @@ function AddTask ( TaskName, Timer ) {
         }
         else
         {
-            CloseButton = $( '<div id="' + TaskName + '_remove">'   +
+            MainTaskDiv = $( '<div id="' + TaskName + '_main" class="main_task_div"></div>' );
+            CloseButton = $( '<div id="' + TaskName + '_remove" class="close_task_div">'   +
                              '&otimes;</div>' );
-            Task = $( '<div id="' + TaskName + '" class="task">'    +
+            Task = $( '<div id="' + TaskName + '" class="task_div">'    +
                       '  <table>'            +
                       '      <tr>'           +
                       '          <td>' + TaskName + '</td>'         +
@@ -132,6 +134,8 @@ function AddTask ( TaskName, Timer ) {
                       '      </tr>'          +
                       '  </table>'           +
                       '</div>' );
+            MainTaskDiv.append ( CloseButton );
+            MainTaskDiv.append ( Task );
 
             //
             //  Add click handlers.
@@ -140,8 +144,7 @@ function AddTask ( TaskName, Timer ) {
 
             //
             //  Add to the DOM.
-            $( "#TaskList" ).append( CloseButton );
-            $( "#TaskList" ).append( Task );
+            $( "#TaskList" ).append( MainTaskDiv );
         }
     }
 } 
