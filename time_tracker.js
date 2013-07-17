@@ -2,6 +2,32 @@ var IntervalID = 0,
     CurrentTask = "",
     count = 0;
 
+//------------------------------------------------------------------------------
+//
+//  Retrieve the TaskArr JSON string from DOM storage, convert it into a
+//  JavaScript object, and return it.  If there is no TaskArr in DOM storage, 
+//  return an empty JavaScript object.
+//
+//------------------------------------------------------------------------------
+function RetrieveTaskArr ( ) {
+    var TaskArr_JSON = "",
+        TaskArr = {};
+
+    if ( localStorage.getItem("TaskArr") )
+    {
+        TaskArr_JSON = localStorage.getItem("TaskArr");
+        TaskArr      = JSON.parse(TaskArr_JSON);
+    }
+
+    return ( TaskArr );
+}
+
+function SaveTaskArr ( TaskArr ) {
+    var TaskArr_JSON = JSON.stringify(TaskArr);
+
+    localStorage.setItem("TaskArr", TaskArr_JSON);
+}
+
 function StartTimer ( event ) {
     var TaskName = $(this).attr("id"),
         Timer;
@@ -29,19 +55,14 @@ function StartTimer ( event ) {
                 TaskArr      = {},
                 TaskTime;
 
-            if ( localStorage.getItem("TaskArr") )
-            {
-                TaskArr_JSON = localStorage.getItem("TaskArr");
-                TaskArr      = JSON.parse(TaskArr_JSON);
-            }
+            TaskArr = RetrieveTaskArr();
 
             TaskTime = parseInt(TaskArr[TaskName]);
             TaskTime++;
             Timer.text(TaskTime);
 
             TaskArr[TaskName] = TaskTime.toString();
-            TaskArr_JSON = JSON.stringify(TaskArr);
-            localStorage.setItem("TaskArr", TaskArr_JSON);
+            SaveTaskArr ( TaskArr );
         }, 1000);
 
         CurrentTask = $(this).attr("id");
@@ -56,17 +77,12 @@ function AddTask ( TaskName, Timer ) {
 
     if ( TaskName != "" )
     {
-        if ( localStorage.getItem("TaskArr") )
-        {
-            TaskArr_JSON = localStorage.getItem("TaskArr");
-            TaskArr = JSON.parse(TaskArr_JSON);
-        }
+        TaskArr = RetrieveTaskArr();
 
         if ( ! (TaskName in TaskArr) )
         {
             TaskArr[TaskName] = Timer;
-            TaskArr_JSON = JSON.stringify(TaskArr);
-            localStorage.setItem("TaskArr", TaskArr_JSON);
+            SaveTaskArr ( TaskArr );
         }
 
 
@@ -102,19 +118,19 @@ function SubmitTask ( event ) {
 } 
 
 $(document).ready(function () {
-    var TaskArr_JSON,
-        TaskArr;
+    var TaskArr;
 
+    //
+    //  Submit hanlder for the task form.
     $( "#TaskForm" ).submit( SubmitTask );
 
-    if ( localStorage.getItem("TaskArr") )
+    //
+    //  Looks like a previous instance of this program stored some tasks in DOM
+    //  storage.  Retrieve and display them.
+    TaskArr = RetrieveTaskArr();
+    for ( var key in TaskArr )
     {
-        TaskArr_JSON = localStorage.getItem("TaskArr");
-        TaskArr = JSON.parse(TaskArr_JSON);
-        for ( var key in TaskArr )
-        {
-            AddTask ( key, TaskArr[key] );
-        }
+        AddTask ( key, TaskArr[key] );
     }
 });
 
