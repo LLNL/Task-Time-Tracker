@@ -73,26 +73,51 @@ function StartTimer ( event ) {
         //
         //  User clicked on a task other than the current task.  Start the timer
         //  and record which task is the current one.
-        Timer = $this.find( "#timer" );
         IntervalID = setInterval(function () {
             var TaskArr_JSON = "",
                 TaskArr      = {},
-                TaskTime;
+                TaskSeconds  = 0,
+                TaskMinutes  = 0,
+                TaskHours    = 0,
+                TaskTimer,
+                Timer = $this.find( "#timer" );
 
             TaskArr = RetrieveTaskArr();
 
-            TaskTime = parseInt(TaskArr[TaskName]);
-            TaskTime++;
-            Timer.text(TaskTime);
+            TaskTimer = TaskArr[TaskName];
+            TaskSeconds = parseInt(TaskTimer.Seconds);
+            TaskMinutes = parseInt(TaskTimer.Minutes);
+            TaskHours   = parseInt(TaskTimer.Hours);
+            if ( TaskSeconds == 59 )
+            {
+                TaskSeconds = 0;
+                if ( TaskMinutes == 59 )
+                {
+                    TaskMinutes = 0;
+                    TaskHours++;
+                }
+                else
+                {
+                    TaskMinutes++;
+                }
+            }
+            else
+            {
+                TaskSeconds++;
+            }
+            Timer.text(TaskHours + ":" + TaskMinutes + ":" + TaskSeconds);
 
-            TaskArr[TaskName] = TaskTime.toString();
+            TaskTimer.Seconds = TaskSeconds.toString();
+            TaskTimer.Minutes = TaskMinutes.toString();
+            TaskTimer.Hours   = TaskHours.toString();
+            TaskArr[TaskName] = TaskTimer;
             SaveTaskArr ( TaskArr );
         }, 1000);
 
         //
         //  Deactivate the previously current task, if there was one, record the
         //  new current task's name, and active the new current task.
-        if ( localStorage.CurrentTask.length > 0 )
+        if ( localStorage.getItem("CurrentTask") )
         {
             DeactivateTask ( localStorage.CurrentTask );
         }
@@ -188,7 +213,11 @@ function AddTask ( TaskName, Timer ) {
                       '          <td>' + TaskName + '</td>'          +
                       '      </tr>'               +
                       '      <tr>'                +
-                      '          <td id="timer">' + Timer + '</td>'  +
+                      '          <td id="timer">' +
+                                     Timer.Hours   + ':' +
+                                     Timer.Minutes + ':' +
+                                     Timer.Seconds +
+                      '          </td>'           +
                       '      </tr>'               +
                       '  </table>'                +
                       '</div>' );
@@ -214,14 +243,14 @@ function SubmitTask ( event ) {
     event.preventDefault();
     event.stopPropagation();
 
-    AddTask ( TaskName, 0 );
+    AddTask ( TaskName, { Hours: 0, Minutes: 0, Seconds: 0 } );
 } 
 
 $(document).ready(function () {
     var TaskArr;
 
     //
-    //  Submit hanlder for the task form.
+    //  Submit handler for the task form.
     $( "#TaskForm" ).submit( SubmitTask );
 
     //
