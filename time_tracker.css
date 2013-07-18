@@ -20,8 +20,7 @@
 .task_current {
     width: 100px;
     padding: 0px;
-    padding-top: 15px;
-    border-collapse: collapse;
+    padding-top: 10px;
     border: none;
     background: #fca44c;
 }
@@ -29,25 +28,22 @@
 .task_current_mouseover {
     width: 100px;
     padding: 0px;
-    padding-top: 15px;
+    padding-top: 10px;
     background: #fca44c;
-    border-collapse: collapse;
     border: 1px solid black;
 }
 
 .task_mouseover {
     width: 100px;
     padding: 0px;
-    padding-top: 15px;
+    padding-top: 10px;
     background: #d4d4d4;
-    border-collapse: collapse;
     border: 1px solid black;
 }
 
 .task_inactive {
     width: 100px;
-    padding-top: 20px;
+    padding-top: 10px;
     background: #d4d4d4;
-    border-collapse: collapse;
-    border: none;
+    border: 1px solid #d4d4d4;
 }
