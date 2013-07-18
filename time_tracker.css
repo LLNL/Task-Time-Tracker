@@ -1,4 +1,5 @@
 .main_task_div {
+    cursor: pointer;
     position: relative;
     width: 100px;
 }
