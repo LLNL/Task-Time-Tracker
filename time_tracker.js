@@ -94,7 +94,32 @@ function RemoveTask ( event ) {
     //
     //  By removing the parent DIV, we remove the entire task from the DOM.
     $this.parent().remove();
+}
 
+function MouseOverTask ( event ) {
+    var $this = $(this);
+
+    if ( $this.hasClass("task_inactive") )
+    {
+        $this.removeClass( "task_inactive" ).addClass( "task_mouseover" );
+    }
+    else if ( $this.hasClass("task_current") )
+    {
+        $this.removeClass( "task_current" ).addClass( "task_current_mouseover" );
+    }
+}
+
+function DeactivateTask ( event ) {
+    var $this = $(this);
+
+    if ( $this.hasClass("task_mouseover") )
+    {
+        $this.removeClass( "task_mouseover" ).addClass( "task_inactive" );
+    }
+    else if ( $this.hasClass("task_current_mouseover") )
+    {
+        $this.removeClass( "task_current_mouseover" ).addClass( "task_current" );
+    }
 }
 
 function AddTask ( TaskName, Timer ) {
@@ -124,15 +149,15 @@ function AddTask ( TaskName, Timer ) {
             MainTaskDiv = $( '<div id="' + TaskName + '_main" class="main_task_div"></div>' );
             CloseButton = $( '<div id="' + TaskName + '_remove" class="close_task_div">'   +
                              '&otimes;</div>' );
-            Task = $( '<div id="' + TaskName + '" class="task_div">'    +
-                      '  <table>'            +
-                      '      <tr>'           +
-                      '          <td>' + TaskName + '</td>'         +
-                      '      </tr>'          +
-                      '      <tr>'           +
-                      '          <td id="timer">' + Timer + '</td>' +
-                      '      </tr>'          +
-                      '  </table>'           +
+            Task = $( '<div id="' + TaskName + '" class="task_div">' +
+                      '  <table class="task_inactive">'              +
+                      '      <tr>'                +
+                      '          <td>' + TaskName + '</td>'          +
+                      '      </tr>'               +
+                      '      <tr>'                +
+                      '          <td id="timer">' + Timer + '</td>'  +
+                      '      </tr>'               +
+                      '  </table>'                +
                       '</div>' );
             MainTaskDiv.append ( CloseButton );
             MainTaskDiv.append ( Task );
@@ -141,6 +166,7 @@ function AddTask ( TaskName, Timer ) {
             //  Add click handlers.
             CloseButton.click ( RemoveTask );
             Task.click ( StartTimer );
+            Task.children('table').hover( MouseOverTask, DeactivateTask );
 
             //
             //  Add to the DOM.
