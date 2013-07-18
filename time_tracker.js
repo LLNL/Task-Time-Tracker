@@ -26,6 +26,28 @@ function SaveTaskArr ( TaskArr ) {
     localStorage.setItem("TaskArr", TaskArr_JSON);
 }
 
+function ActivateTask ( TaskName ) {
+    var TaskObj = $("#" + TaskName + ">table" );
+
+    if ( TaskObj.hasClass("task_mouseover") )
+    {
+        TaskObj.removeClass( "task_mouseover" ).addClass( "task_current_mouseover" );
+    }
+}
+
+function DeactivateTask ( TaskName ) {
+    var TaskObj = $("#" + TaskName + ">table" );
+
+    if ( TaskObj.hasClass("task_current_mouseover") )
+    {
+        TaskObj.removeClass( "task_current_mouseover" ).addClass( "task_mouseover" );
+    }
+    else if ( TaskObj.hasClass("task_current") )
+    {
+        TaskObj.removeClass( "task_current" ).addClass( "task_inactive" );
+    }
+}
+
 function StartTimer ( event ) {
     var TaskName = $(this).attr("id"),
         $this    = $(this),
@@ -40,14 +62,17 @@ function StartTimer ( event ) {
     
     if ( $this.attr("id") == localStorage.CurrentTask )
     {
-        //  User clicked on the current task.  Just stop the timer,
-        //  clear the current task, and be done.
+        //  User clicked on the current task.  Clear the current task, and be
+        //  done.
+        DeactivateTask ( localStorage.CurrentTask );
         localStorage.CurrentTask = "";
+
     }
     else
     {
-        // User clicked on a task other than the current task.  Start the timer
-        // and record which task is the current one.
+        //
+        //  User clicked on a task other than the current task.  Start the timer
+        //  and record which task is the current one.
         Timer = $this.find( "#timer" );
         IntervalID = setInterval(function () {
             var TaskArr_JSON = "",
@@ -64,7 +89,15 @@ function StartTimer ( event ) {
             SaveTaskArr ( TaskArr );
         }, 1000);
 
+        //
+        //  Deactivate the previously current task, if there was one, record the
+        //  new current task's name, and active the new current task.
+        if ( localStorage.CurrentTask.length > 0 )
+        {
+            DeactivateTask ( localStorage.CurrentTask );
+        }
         localStorage.CurrentTask = $this.attr("id");
+        ActivateTask ( localStorage.CurrentTask );
     }
 }
 
@@ -96,7 +129,7 @@ function RemoveTask ( event ) {
     $this.parent().remove();
 }
 
-function MouseOverTask ( event ) {
+function MouseEnterTask ( event ) {
     var $this = $(this);
 
     if ( $this.hasClass("task_inactive") )
@@ -109,7 +142,7 @@ function MouseOverTask ( event ) {
     }
 }
 
-function DeactivateTask ( event ) {
+function MouseLeaveTask ( event ) {
     var $this = $(this);
 
     if ( $this.hasClass("task_mouseover") )
@@ -166,7 +199,7 @@ function AddTask ( TaskName, Timer ) {
             //  Add click handlers.
             CloseButton.click ( RemoveTask );
             Task.click ( StartTimer );
-            Task.children('table').hover( MouseOverTask, DeactivateTask );
+            Task.children('table').hover( MouseEnterTask, MouseLeaveTask );
 
             //
             //  Add to the DOM.
