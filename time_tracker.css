@@ -5,9 +5,11 @@
 }
 
 .close_task_div {
+    font-family: Cambria, sans-serif;
+    font-size: small;
     position: absolute;
     top: 0px;
-    left: 3px;
+    left: 2px;
     width: 15px;
 }
 
