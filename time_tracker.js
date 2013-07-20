@@ -101,7 +101,7 @@ function StartTimer ( event ) {
         //  User clicked on the current task.  Clear the current task, and be
         //  done.
         DeactivateTask ( localStorage.CurrentTask );
-        localStorage.CurrentTask = "";
+        localStorage.setItem( "CurrentTask", "" );
 
     }
     else
@@ -118,12 +118,14 @@ function StartTimer ( event ) {
                 TaskTimer,
                 Timer = $this.find( "#timer" );
 
-            TaskArr = RetrieveTaskArr();
-
-            TaskTimer = TaskArr[TaskName];
+            TaskArr     = RetrieveTaskArr();
+            TaskTimer   = TaskArr[TaskName];
             TaskSeconds = parseInt(TaskTimer.Seconds);
             TaskMinutes = parseInt(TaskTimer.Minutes);
             TaskHours   = parseInt(TaskTimer.Hours);
+
+            //
+            //  Add one second to the timer.
             if ( TaskSeconds == 59 )
             {
                 TaskSeconds = 0;
@@ -141,14 +143,19 @@ function StartTimer ( event ) {
             {
                 TaskSeconds++;
             }
+
+            //
+            //  Update the timer in the DOM.
             Timer.text(TaskHours + ":" + TaskMinutes + ":" + TaskSeconds);
 
+            //
+            //  Save the updated timer to the TaskArr in local DOM storage.
             TaskTimer.Seconds = TaskSeconds.toString();
             TaskTimer.Minutes = TaskMinutes.toString();
             TaskTimer.Hours   = TaskHours.toString();
             TaskArr[TaskName] = TaskTimer;
             SaveTaskArr ( TaskArr );
-        }, 1000);
+        }, 1000); // SetInterval
 
         //
         //  Deactivate the previously current task, if there was one, record the
@@ -210,11 +217,13 @@ function MouseEnterTask ( event ) {
 
     if ( $this.hasClass("task_inactive") )
     {
-        $this.removeClass( "task_inactive" ).addClass( "task_mouseover" );
+        $this.removeClass( "task_inactive" )
+             .addClass( "task_mouseover" );
     }
     else if ( $this.hasClass("task_current") )
     {
-        $this.removeClass( "task_current" ).addClass( "task_current_mouseover" );
+        $this.removeClass( "task_current" )
+             .addClass( "task_current_mouseover" );
     }
 
 } // MouseEnterTask
@@ -230,11 +239,13 @@ function MouseLeaveTask ( event ) {
 
     if ( $this.hasClass("task_mouseover") )
     {
-        $this.removeClass( "task_mouseover" ).addClass( "task_inactive" );
+        $this.removeClass( "task_mouseover" )
+             .addClass( "task_inactive" );
     }
     else if ( $this.hasClass("task_current_mouseover") )
     {
-        $this.removeClass( "task_current_mouseover" ).addClass( "task_current" );
+        $this.removeClass( "task_current_mouseover" )
+             .addClass( "task_current" );
     }
 
 } // MouseLeaveTask
