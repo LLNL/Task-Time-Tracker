@@ -1,8 +1,19 @@
 //
 //  Global
 //  The ID of the currently running timer interval.
-var IntervalID = 0;
+var IntervalID = 0,
+    ID = 0;
 
+
+
+//------------------------------------------------------------------------------
+//
+//  Return the next Task ID to be used in the task chiclet DIV.
+//
+//------------------------------------------------------------------------------
+function NextTaskID {
+    return( IntervalID++ );
+}
 
 //------------------------------------------------------------------------------
 //
@@ -44,8 +55,8 @@ function SaveTaskArr ( TaskArr ) {
 //  Via CSS, make the task chiclet appear active.
 //
 //------------------------------------------------------------------------------
-function ActivateTask ( TaskName ) {
-    var TaskObj = $("#" + TaskName + ">table" );
+function ActivateTask ( TaskID ) {
+    var TaskObj = $("#" + TaskID + ">table" );
 
     if ( TaskObj.hasClass("task_mouseover") )
     {
@@ -61,8 +72,8 @@ function ActivateTask ( TaskName ) {
 //  Via CSS, make the task chiclet appear inactive.
 //
 //------------------------------------------------------------------------------
-function DeactivateTask ( TaskName ) {
-    var TaskObj = $("#" + TaskName + ">table" );
+function DeactivateTask ( TaskID ) {
+    var TaskObj = $("#" + TaskID + ">table" );
 
     if ( TaskObj.hasClass("task_current_mouseover") )
     {
@@ -85,8 +96,8 @@ function DeactivateTask ( TaskName ) {
 //
 //------------------------------------------------------------------------------
 function StartTimer ( event ) {
-    var TaskName = $(this).attr("id"),
-        $this    = $(this),
+    var TaskID = $(this).attr("id"),
+        $this  = $(this),
         Timer;
 
     if (IntervalID != 0)
@@ -96,12 +107,12 @@ function StartTimer ( event ) {
         IntervalID = 0;
     }
     
-    if ( $this.attr("id") == localStorage.CurrentTask )
+    if ( $this.attr("id") == localStorage.CurrentTaskID )
     {
         //  User clicked on the current task.  Clear the current task, and be
         //  done.
-        DeactivateTask ( localStorage.CurrentTask );
-        localStorage.setItem( "CurrentTask", "" );
+        DeactivateTask ( localStorage.CurrentTaskID );
+        localStorage.setItem( "CurrentTaskID", -1 );
 
     }
     else
@@ -115,14 +126,14 @@ function StartTimer ( event ) {
                 TaskSeconds  = 0,
                 TaskMinutes  = 0,
                 TaskHours    = 0,
-                TaskTimer,
+                Task,
                 Timer = $this.find( "#timer" );
 
             TaskArr     = RetrieveTaskArr();
-            TaskTimer   = TaskArr[TaskName];
-            TaskSeconds = parseInt(TaskTimer.Seconds);
-            TaskMinutes = parseInt(TaskTimer.Minutes);
-            TaskHours   = parseInt(TaskTimer.Hours);
+            Task        = TaskArr[TaskID];
+            TaskSeconds = parseInt(Task.Seconds);
+            TaskMinutes = parseInt(Task.Minutes);
+            TaskHours   = parseInt(Task.Hours);
 
             //
             //  Add one second to the timer.
@@ -153,21 +164,21 @@ function StartTimer ( event ) {
             TaskTimer.Seconds = TaskSeconds.toString();
             TaskTimer.Minutes = TaskMinutes.toString();
             TaskTimer.Hours   = TaskHours.toString();
-            TaskArr[TaskName] = TaskTimer;
+            TaskArr[TaskID] = TaskTimer;
             SaveTaskArr ( TaskArr );
         }, 1000); // SetInterval
 
         //
         //  Deactivate the previously current task, if there was one, record the
         //  new current task's name, and active the new current task.
-        if ( localStorage.getItem("CurrentTask") )
+        if ( localStorage.getItem("CurrentTaskID") )
         {
-            DeactivateTask ( localStorage.CurrentTask );
+            DeactivateTask ( localStorage.CurrentTaskID );
         }
-        localStorage.CurrentTask = $this.attr("id");
-        ActivateTask ( localStorage.CurrentTask );
+        localStorage.setItem ( "CurrentTaskID", TaskID );
+        ActivateTask ( localStorage.CurrentTaskID );
 
-    } // End of if ( $this.attr("id") == localStorage.CurrentTask )
+    } // End of if ( $this.attr("id") == localStorage.CurrentTaskID )
 
 }  // StartTimer
 
@@ -179,25 +190,25 @@ function StartTimer ( event ) {
 //------------------------------------------------------------------------------
 function RemoveTask ( event ) {
     var $this     = $(this),
-        ID        = $this.attr("id"),
+        DivID     = $this.attr("id"),
         TaskArr,
-        TaskDelim = ID.lastIndexOf('_'),
-        TaskName = ID.substring(0,TaskDelim);
+        TaskDelim = ID.indexOf('_'),
+        TaskID    = ID.substring(0,TaskDelim);
 
     //
     //  Remove the Task from DOM storage.
     TaskArr = RetrieveTaskArr();
-    delete TaskArr[TaskName];
+    delete TaskArr[TaskID];
     SaveTaskArr( TaskArr );
 
-    if ( localStorage.CurrentTask == TaskName )
+    if ( localStorage.CurrentTaskID == TaskID )
     {
         //
-        //  If the task we're removing is the CurrentTask,
+        //  If the task we're removing is the CurrentTaskID,
         //  stop the timer and clear the related IntervalID.
         clearInterval( IntervalID );
         IntervalID = 0;
-        localStorage.CurrentTask = "";
+        localStorage.setItem ( 'CurrentTaskID', -1 );
     }
 
     //
@@ -256,21 +267,22 @@ function MouseLeaveTask ( event ) {
 //  Add a task to the TaskArr in local DOM storage and to the DOM.
 //
 //------------------------------------------------------------------------------
-function AddTask ( TaskName, Timer ) {
-    var CloseButton,
+function AddTask ( TaskID, Task ) {
+    var CloseButtonDiv,
         MainTaskDiv,
-        Task,
+        re = '/\s/g',
+        TaskDiv,
         TaskArr_JSON,
         TaskArr = {};
 
-    if ( TaskName.length > 0 )
+    if ( Task.TaskName.length > 0 )
     {
         //
         //  Retrieve the TaskArr from local DOM storage and check whether this
         //  task already exists.
         TaskArr = RetrieveTaskArr();
 
-        if ( $("#" + TaskName).length > 0 )
+        if ( $("#" + TaskID).length > 0 )
         {
             //
             //  Let the user know that this task already exists.
@@ -284,48 +296,48 @@ function AddTask ( TaskName, Timer ) {
             //  storage.
             //  Note:  the task may be in local DOM storage from a previous page
             //  instance even though it's not in the DOM.
-            if ( ! (TaskName in TaskArr) )
+            if ( ! (TaskID in TaskArr) )
             {
-                TaskArr[TaskName] = Timer;
+                TaskArr[TaskID] = Task;
                 SaveTaskArr ( TaskArr );
             }
 
             //
-            //  Add the task chiclet to the DOM.
-            MainTaskDiv = $( '<div id="' + TaskName +
-                             '_main" class="main_task_div"></div>' );
-            CloseButton = $( '<div id="' + TaskName + '_remove"' +
+            //  Create the task chiclet.
+            MainTaskDiv = $( '<div id="' + TaskID + '_main"'
+                             'class="main_task_div"></div>' );
+            CloseButtonDiv = $( '<div id="' + TaskID + '_remove"' +
                              'class="close_task_div">&otimes;</div>' );
-            Task = $( '<div id="' + TaskName + '" class="task_div">' +
+            TaskDiv = $( '<div id="' + TaskID + '" class="task_div">' +
                       '  <table class="task_inactive">'              +
                       '      <tr>'                +
-                      '          <td>' + TaskName + '</td>'          +
+                      '          <td>' + Task.TaskName + '</td>'          +
                       '      </tr>'               +
                       '      <tr>'                +
                       '          <td id="timer">' +
-                                    Timer.Hours   + ':' +
-                                    Timer.Minutes + ':' +
-                                    Timer.Seconds +
+                                     Task.Hours   + ':' +
+                                     Task.Minutes + ':' +
+                                     Task.Seconds +
                       '          </td>'           +
                       '      </tr>'               +
                       '  </table>'                +
                       '</div>' );
-            MainTaskDiv.append ( CloseButton );
-            MainTaskDiv.append ( Task );
+            MainTaskDiv.append ( CloseButtonDiv );
+            MainTaskDiv.append ( TaskDiv );
 
             //
             //  Add click handlers.
-            CloseButton.click ( RemoveTask );
-            Task.click ( StartTimer );
-            Task.children('table').hover( MouseEnterTask, MouseLeaveTask );
+            CloseButtonDiv.click ( RemoveTask );
+            TaskDiv.click ( StartTimer );
+            TaskDiv.children('table').hover( MouseEnterTask, MouseLeaveTask );
 
             //
             //  Add to the DOM.
             $( "#TaskList" ).append( MainTaskDiv );
 
-        } // End of if ( $("#" + TaskName).length > 0 )
+        } // End of if ( $("#" + TaskID).length > 0 )
 
-    } // End of if ( TaskName.length > 0 )
+    } // End of if ( Task.TaskName.length > 0 )
 
 } // AddTask 
 
@@ -336,14 +348,15 @@ function AddTask ( TaskName, Timer ) {
 //
 //------------------------------------------------------------------------------
 function SubmitTask ( event ) {
-    var TaskName = $( "#TaskName" ).val();
+    var TaskName = $( "#TaskName" ).val(),
+        TaskID   = NextTaskID();
 
     event.preventDefault();
     event.stopPropagation();
 
     //
     //  Add the task to local DOM storage and to the DOM.
-    AddTask ( TaskName, { Hours: 0, Minutes: 0, Seconds: 0 } );
+    AddTask ( TaskID, { Name: TaskName, Hours: 0, Minutes: 0, Seconds: 0 } );
 
 } // SubmitTask
 
@@ -364,9 +377,9 @@ $(document).ready(function () {
     //  Looks like a previous instance of this program stored some tasks in DOM
     //  storage.  Retrieve and display them.
     TaskArr = RetrieveTaskArr();
-    for ( var Task in TaskArr )
+    for ( var TaskID in TaskArr )
     {
-        AddTask ( Task, TaskArr[Task] );
+        AddTask ( TaskID, TaskArr[TaskID] );
     }
 
 }); // $(document).ready()
