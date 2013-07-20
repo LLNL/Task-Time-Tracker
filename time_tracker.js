@@ -11,8 +11,8 @@ var IntervalID = 0,
 //  Return the next Task ID to be used in the task chiclet DIV.
 //
 //------------------------------------------------------------------------------
-function NextTaskID {
-    return( IntervalID++ );
+function NextTaskID ( ) {
+    return( ID++ );
 }
 
 //------------------------------------------------------------------------------
@@ -113,7 +113,6 @@ function StartTimer ( event ) {
         //  done.
         DeactivateTask ( localStorage.CurrentTaskID );
         localStorage.setItem( "CurrentTaskID", -1 );
-
     }
     else
     {
@@ -161,10 +160,10 @@ function StartTimer ( event ) {
 
             //
             //  Save the updated timer to the TaskArr in local DOM storage.
-            TaskTimer.Seconds = TaskSeconds.toString();
-            TaskTimer.Minutes = TaskMinutes.toString();
-            TaskTimer.Hours   = TaskHours.toString();
-            TaskArr[TaskID] = TaskTimer;
+            Task.Seconds    = TaskSeconds.toString();
+            Task.Minutes    = TaskMinutes.toString();
+            Task.Hours      = TaskHours.toString();
+            TaskArr[TaskID] = Task;
             SaveTaskArr ( TaskArr );
         }, 1000); // SetInterval
 
@@ -192,8 +191,8 @@ function RemoveTask ( event ) {
     var $this     = $(this),
         DivID     = $this.attr("id"),
         TaskArr,
-        TaskDelim = ID.indexOf('_'),
-        TaskID    = ID.substring(0,TaskDelim);
+        TaskDelim = DivID.indexOf('_'),
+        TaskID    = DivID.substring(0,TaskDelim);
 
     //
     //  Remove the Task from DOM storage.
@@ -275,7 +274,7 @@ function AddTask ( TaskID, Task ) {
         TaskArr_JSON,
         TaskArr = {};
 
-    if ( Task.TaskName.length > 0 )
+    if ( Task.Name.length > 0 )
     {
         //
         //  Retrieve the TaskArr from local DOM storage and check whether this
@@ -304,14 +303,14 @@ function AddTask ( TaskID, Task ) {
 
             //
             //  Create the task chiclet.
-            MainTaskDiv = $( '<div id="' + TaskID + '_main"'
+            MainTaskDiv = $( '<div id="' + TaskID + '_main"' +
                              'class="main_task_div"></div>' );
             CloseButtonDiv = $( '<div id="' + TaskID + '_remove"' +
                              'class="close_task_div">&otimes;</div>' );
             TaskDiv = $( '<div id="' + TaskID + '" class="task_div">' +
                       '  <table class="task_inactive">'              +
                       '      <tr>'                +
-                      '          <td>' + Task.TaskName + '</td>'          +
+                      '          <td>' + Task.Name + '</td>'          +
                       '      </tr>'               +
                       '      <tr>'                +
                       '          <td id="timer">' +
@@ -337,7 +336,7 @@ function AddTask ( TaskID, Task ) {
 
         } // End of if ( $("#" + TaskID).length > 0 )
 
-    } // End of if ( Task.TaskName.length > 0 )
+    } // End of if ( Task.Name.length > 0 )
 
 } // AddTask 
 
@@ -380,6 +379,13 @@ $(document).ready(function () {
     for ( var TaskID in TaskArr )
     {
         AddTask ( TaskID, TaskArr[TaskID] );
+        if ( TaskID >= ID )
+        {
+            //
+            //  Set the global ID to one larger than the largest Task ID that we
+            //  found in in local DOM storage.
+            ID = TaskID + 1;
+        }
     }
 
 }); // $(document).ready()
