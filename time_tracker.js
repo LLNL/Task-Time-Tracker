@@ -11,7 +11,8 @@ var IntervalID = 0,
 //  Return the next Task ID to be used in the task chiclet DIV.
 //
 //------------------------------------------------------------------------------
-function NextTaskID ( ) {
+function NextTaskID ( )
+{
     return( ID++ );
 }
 
@@ -22,7 +23,8 @@ function NextTaskID ( ) {
 //  return an empty JavaScript object.
 //
 //------------------------------------------------------------------------------
-function RetrieveTaskArr ( ) {
+function RetrieveTaskArr ( )
+{
     var TaskArr_JSON = "",
         TaskArr = {};
 
@@ -42,7 +44,8 @@ function RetrieveTaskArr ( ) {
 //  Convert the TaskArr to JSON and save it to local DOM storage.
 //
 //------------------------------------------------------------------------------
-function SaveTaskArr ( TaskArr ) {
+function SaveTaskArr ( TaskArr )
+{
     var TaskArr_JSON = JSON.stringify(TaskArr);
 
     localStorage.setItem("TaskArr", TaskArr_JSON);
@@ -56,7 +59,8 @@ function SaveTaskArr ( TaskArr ) {
 //  matches the give TaskName. Otherwise, return false.
 //
 //------------------------------------------------------------------------------
-function TaskAlreadyExistsinArr ( TaskArr, TaskName ) {
+function TaskAlreadyExistsinArr ( TaskArr, TaskName )
+{
     for ( var Task in TaskArr )
     {
         if ( TaskArr[Task].Name == TaskName )
@@ -75,7 +79,8 @@ function TaskAlreadyExistsinArr ( TaskArr, TaskName ) {
 //  Via CSS, make the task chiclet appear active.
 //
 //------------------------------------------------------------------------------
-function ActivateTask ( TaskID ) {
+function ActivateTask ( TaskID )
+{
     var TaskObj = $("#" + TaskID + ">table" );
 
     if ( TaskObj.hasClass("task_mouseover") )
@@ -92,7 +97,8 @@ function ActivateTask ( TaskID ) {
 //  Via CSS, make the task chiclet appear inactive.
 //
 //------------------------------------------------------------------------------
-function DeactivateTask ( TaskID ) {
+function DeactivateTask ( TaskID )
+{
     var TaskObj = $("#" + TaskID + ">table" );
 
     if ( TaskObj.hasClass("task_current_mouseover") )
@@ -115,7 +121,8 @@ function DeactivateTask ( TaskID ) {
 //  start that task's timer.
 //
 //------------------------------------------------------------------------------
-function StartTimer ( event ) {
+function StartTimer ( event )
+{
     var TaskID = $(this).attr("id"),
         $this  = $(this),
         Timer;
@@ -207,7 +214,8 @@ function StartTimer ( event ) {
 //  Remove a task from the DOM and from local DOM storage.
 //
 //------------------------------------------------------------------------------
-function RemoveTask ( event ) {
+function RemoveTask ( event )
+{
     var $this     = $(this),
         DivID     = $this.attr("id"),
         TaskArr,
@@ -242,7 +250,8 @@ function RemoveTask ( event ) {
 //  Via CSS, highlight the task chiclet currently under the curser.
 //
 //------------------------------------------------------------------------------
-function MouseEnterTask ( event ) {
+function MouseEnterTask ( event )
+{
     var $this = $(this);
 
     if ( $this.hasClass("task_inactive") )
@@ -264,7 +273,8 @@ function MouseEnterTask ( event ) {
 //  Set the CSS of the task chiclet to un-highlighted.
 //
 //------------------------------------------------------------------------------
-function MouseLeaveTask ( event ) {
+function MouseLeaveTask ( event )
+{
     var $this = $(this);
 
     if ( $this.hasClass("task_mouseover") )
@@ -286,7 +296,8 @@ function MouseLeaveTask ( event ) {
 //  Add a task to the TaskArr in local DOM storage and to the DOM.
 //
 //------------------------------------------------------------------------------
-function AddTask ( TaskID, Task ) {
+function AddTask ( TaskID, Task )
+{
     var CloseButtonDiv,
         MainTaskDiv,
         re = '/\s/g',
@@ -367,7 +378,8 @@ function AddTask ( TaskID, Task ) {
 //  Submit handler for task submission form at top of page.
 //
 //------------------------------------------------------------------------------
-function SubmitTask ( event ) {
+function SubmitTask ( event )
+{
     var TaskName = $( "#TaskName" ).val(),
         TaskID   = NextTaskID();
 
