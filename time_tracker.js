@@ -52,6 +52,26 @@ function SaveTaskArr ( TaskArr ) {
 
 //------------------------------------------------------------------------------
 //
+//  A linear search through the task array.  Return true if any task's name
+//  matches the give TaskName. Otherwise, return false.
+//
+//------------------------------------------------------------------------------
+function TaskAlreadyExistsinArr ( TaskArr, TaskName ) {
+    for ( var Task in TaskArr )
+    {
+        if ( TaskArr[Task].Name == TaskName )
+        {
+            return true;
+        }
+    }
+
+    return false;
+
+} // TaskAlreadyExistsinArr
+
+
+//------------------------------------------------------------------------------
+//
 //  Via CSS, make the task chiclet appear active.
 //
 //------------------------------------------------------------------------------
@@ -281,7 +301,8 @@ function AddTask ( TaskID, Task ) {
         //  task already exists.
         TaskArr = RetrieveTaskArr();
 
-        if ( $("#" + TaskID).length > 0 )
+        TaskExists = TaskAlreadyExistsinArr ( TaskArr, Task.Name );
+        if ( TaskExists )
         {
             //
             //  Let the user know that this task already exists.
