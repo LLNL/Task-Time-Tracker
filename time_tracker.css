@@ -1,3 +1,8 @@
+form {
+    text-align: center;
+    padding-bottom: 15px;
+}
+
 .main_task_div {
     cursor: pointer;
     position: relative;
