@@ -1,6 +1,7 @@
 //
 //  Global
-//  The ID of the currently running timer interval.
+//  IntervalID:  The ID of the currently running timer interval.
+//  ID:  A monotonically increasing value to use for generating new task IDs.
 var IntervalID = 0,
     ID = 0;
 
@@ -300,75 +301,53 @@ function AddTask ( TaskID, Task )
 {
     var CloseButtonDiv,
         MainTaskDiv,
-        re = '/\s/g',
         TaskDiv,
         TaskArr_JSON,
-        TaskArr = {};
-
-    if ( Task.Name.length > 0 )
-    {
-        //
-        //  Retrieve the TaskArr from local DOM storage and check whether this
-        //  task already exists.
         TaskArr = RetrieveTaskArr();
 
-        TaskExists = TaskAlreadyExistsinArr ( TaskArr, Task.Name );
-        if ( TaskExists )
-        {
-            //
-            //  Let the user know that this task already exists.
-            alert ( "That task already exists!" );
-            return;
-        }
-        else
-        {
-            //
-            //  If we haven't yet run across this task, save it into local DOM
-            //  storage.
-            //  Note:  the task may be in local DOM storage from a previous page
-            //  instance even though it's not in the DOM.
-            if ( ! (TaskID in TaskArr) )
-            {
-                TaskArr[TaskID] = Task;
-                SaveTaskArr ( TaskArr );
-            }
+    //
+    //  If we haven't yet run across this task, save it into local DOM
+    //  storage.
+    //  Note:  the task may be in local DOM storage from a previous page
+    //  instance even though it's not in the DOM.
+    if ( ! (TaskID in TaskArr) )
+    {
+        TaskArr[TaskID] = Task;
+        SaveTaskArr ( TaskArr );
+    }
 
-            //
-            //  Create the task chiclet.
-            MainTaskDiv = $( '<div id="' + TaskID + '_main"' +
-                             'class="main_task_div"></div>' );
-            CloseButtonDiv = $( '<div id="' + TaskID + '_remove"' +
-                             'class="close_task_div">&otimes;</div>' );
-            TaskDiv = $( '<div id="' + TaskID + '" class="task_div">' +
-                      '  <table class="task_inactive">'              +
-                      '      <tr>'                +
-                      '          <td>' + Task.Name + '</td>'          +
-                      '      </tr>'               +
-                      '      <tr>'                +
-                      '          <td id="timer">' +
-                                     Task.Hours   + ':' +
-                                     Task.Minutes + ':' +
-                                     Task.Seconds +
-                      '          </td>'           +
-                      '      </tr>'               +
-                      '  </table>'                +
-                      '</div>' );
-            MainTaskDiv.append ( CloseButtonDiv );
-            MainTaskDiv.append ( TaskDiv );
+    //
+    //  Create the task chiclet.
+    MainTaskDiv = $( '<div id="' + TaskID + '_main"' +
+                     'class="main_task_div"></div>' );
+    CloseButtonDiv = $( '<div id="' + TaskID + '_remove"' +
+                     'class="close_task_div">&otimes;</div>' );
+    TaskDiv = $( '<div id="' + TaskID + '" class="task_div">' +
+              '  <table class="task_inactive">'              +
+              '      <tr>'                +
+              '          <td>' + Task.Name + '</td>'          +
+              '      </tr>'               +
+              '      <tr>'                +
+              '          <td id="timer">' +
+                             Task.Hours   + ':' +
+                             Task.Minutes + ':' +
+                             Task.Seconds +
+              '          </td>'           +
+              '      </tr>'               +
+              '  </table>'                +
+              '</div>' );
+    MainTaskDiv.append ( CloseButtonDiv );
+    MainTaskDiv.append ( TaskDiv );
 
-            //
-            //  Add click handlers.
-            CloseButtonDiv.click ( RemoveTask );
-            TaskDiv.click ( StartTimer );
-            TaskDiv.children('table').hover( MouseEnterTask, MouseLeaveTask );
+    //
+    //  Add click handlers.
+    CloseButtonDiv.click ( RemoveTask );
+    TaskDiv.click ( StartTimer );
+    TaskDiv.children('table').hover( MouseEnterTask, MouseLeaveTask );
 
-            //
-            //  Add to the DOM.
-            $( "#TaskList" ).append( MainTaskDiv );
-
-        } // End of if ( $("#" + TaskID).length > 0 )
-
-    } // End of if ( Task.Name.length > 0 )
+    //
+    //  Add to the DOM.
+    $( "#TaskList" ).append( MainTaskDiv );
 
 } // AddTask 
 
@@ -380,15 +359,46 @@ function AddTask ( TaskID, Task )
 //------------------------------------------------------------------------------
 function SubmitTask ( event )
 {
-    var TaskName = $( "#TaskName" ).val(),
+    var FormTextField = $( "#Form_TaskName" ),
+        TaskArr,
+        TaskName = FormTextField.val(),
         TaskID   = NextTaskID();
+
 
     event.preventDefault();
     event.stopPropagation();
 
-    //
-    //  Add the task to local DOM storage and to the DOM.
-    AddTask ( TaskID, { Name: TaskName, Hours: 0, Minutes: 0, Seconds: 0 } );
+
+    if ( TaskName.length > 0 )
+    {
+        //
+        //  Clear the form's text field.
+        FormTextField.val( '' );
+
+        //
+        //  Retrieve the TaskArr from local DOM storage and check whether this
+        //  task already exists.
+        TaskArr = RetrieveTaskArr();
+
+        TaskExists = TaskAlreadyExistsinArr ( TaskArr, TaskName );
+        if ( TaskExists )
+        {
+            //
+            //  Let the user know that this task already exists.
+            alert ( "That task already exists!" );
+        }
+        else
+        {
+            //
+            //  Add the task to local DOM storage and to the DOM.
+            AddTask ( TaskID,
+                      { Name   : TaskName,
+                        Hours  : 0,
+                        Minutes: 0,
+                        Seconds: 0 } );
+        }
+
+    } // End if ( TaskName.length > 0 ) 
 
 } // SubmitTask
 
@@ -399,7 +409,8 @@ function SubmitTask ( event )
 //
 //------------------------------------------------------------------------------
 $(document).ready(function () {
-    var TaskArr;
+    var TaskArr,
+        TaskID_int;
 
     //
     //  Submit handler for the task form.
@@ -411,13 +422,18 @@ $(document).ready(function () {
     TaskArr = RetrieveTaskArr();
     for ( var TaskID in TaskArr )
     {
+        //
+        //  TaskID comes from an array that's been stored in JSON format.  Every        //  scalar has been restored from JSON back into a JavaScript string.
+        //  So, parse the ID into an int.
+        TaskID_int = parseInt( TaskID );
+
         AddTask ( TaskID, TaskArr[TaskID] );
-        if ( TaskID >= ID )
+        if ( TaskID_int >= ID )
         {
             //
             //  Set the global ID to one larger than the largest Task ID that we
             //  found in in local DOM storage.
-            ID = TaskID + 1;
+            ID = TaskID_int + 1;
         }
     }
 
