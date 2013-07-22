@@ -26,6 +26,7 @@ form {
 }
 
 .main_task_div {
+    padding-bottom: 2px;
     cursor: pointer;
     position: relative;
 }
@@ -43,34 +44,30 @@ form {
     font-family: Helvetica Neue, sans-serif;
     font-weight: 100;
     font-size: xx-large;
-    padding: 1px;
+    padding: 10px 10px 5px 10px;
     text-align: center;
 }
 
 .task_current {
-    width: 100px;
-    padding: 10px 5px 0px 5px;
+    width: auto;
     background: #fca44c;
     border: 1px solid #fca44c;
 }
 
 .task_current_mouseover {
-    width: 100px;
-    padding: 10px 5px 0px 5px;
+    width: auto;
     background: #fca44c;
     border: 1px solid black;
 }
 
 .task_mouseover {
-    width: 100px;
-    padding: 10px 5px 0px 5px;
+    width: auto;
     background: #d4d4d4;
     border: 1px solid black;
 }
 
 .task_inactive {
-    width: 100px;
-    padding: 10px 5px 0px 5px;
+    width: auto;
     background: #d4d4d4;
     border: 1px solid #d4d4d4;
 }

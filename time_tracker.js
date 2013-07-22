@@ -82,7 +82,7 @@ function TaskAlreadyExistsinArr ( TaskArr, TaskName )
 //------------------------------------------------------------------------------
 function ActivateTask ( TaskID )
 {
-    var TaskObj = $("#" + TaskID + ">table" );
+    var TaskObj = $( "#" + TaskID );
 
     if ( TaskObj.hasClass("task_mouseover") )
     {
@@ -100,7 +100,7 @@ function ActivateTask ( TaskID )
 //------------------------------------------------------------------------------
 function DeactivateTask ( TaskID )
 {
-    var TaskObj = $("#" + TaskID + ">table" );
+    var TaskObj = $( "#" + TaskID );
 
     if ( TaskObj.hasClass("task_current_mouseover") )
     {
@@ -322,20 +322,16 @@ function AddTask ( TaskID, Task )
                      'class="main_task_div"></div>' );
     CloseButtonDiv = $( '<div id="' + TaskID + '_remove"' +
                      'class="close_task_div">&otimes;</div>' );
-    TaskDiv = $( '<div id="' + TaskID + '" class="task_div">' +
-              '  <table class="task_inactive">'              +
-              '      <tr>'                +
-              '          <td>' + Task.Name + '</td>'          +
-              '      </tr>'               +
-              '      <tr>'                +
-              '          <td id="timer">' +
-                             Task.Hours   + ':' +
-                             Task.Minutes + ':' +
-                             Task.Seconds +
-              '          </td>'           +
-              '      </tr>'               +
-              '  </table>'                +
-              '</div>' );
+    TaskDiv = $( '<div id="' + TaskID + '" class="task_div task_inactive">' +
+                     '<div>'            +
+                          Task.Name     +
+                     '</div>'           +
+                     '<div id="timer">' +
+                          Task.Hours    + ':' +
+                          Task.Minutes  + ':' +
+                          Task.Seconds  +
+                     '</div>'           +
+                 '</div>' );
     MainTaskDiv.append ( CloseButtonDiv );
     MainTaskDiv.append ( TaskDiv );
 
@@ -343,7 +339,10 @@ function AddTask ( TaskID, Task )
     //  Add click handlers.
     CloseButtonDiv.click ( RemoveTask );
     TaskDiv.click ( StartTimer );
-    TaskDiv.children('table').hover( MouseEnterTask, MouseLeaveTask );
+
+    //
+    //  Add combo MouseEnter and MouseLeave handler.
+    TaskDiv.hover( MouseEnterTask, MouseLeaveTask );
 
     //
     //  Add to the DOM.
