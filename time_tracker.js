@@ -82,13 +82,18 @@ function TaskAlreadyExistsinArr ( TaskArr, TaskName )
 //------------------------------------------------------------------------------
 function ActivateTask ( TaskID )
 {
-    var TaskObj = $( "#" + TaskID );
+    var TaskObj  = $( "#" + TaskID ),
+        CloseObj = TaskObj.parent().find( "#" + TaskID + "_remove" );
 
     if ( TaskObj.hasClass("task_mouseover") )
     {
         TaskObj.removeClass( "task_mouseover" )
                .addClass( "task_current_mouseover" );
     }
+
+    CloseObj.removeClass ( 'close_task_div_inactive' )
+            .addClass ( 'close_task_div_active' );
+
 
 } // ActivateTask
 
@@ -101,6 +106,7 @@ function ActivateTask ( TaskID )
 function DeactivateTask ( TaskID )
 {
     var TaskObj = $( "#" + TaskID );
+        CloseObj = TaskObj.parent().find( "#" + TaskID + "_remove" );
 
     if ( TaskObj.hasClass("task_current_mouseover") )
     {
@@ -112,6 +118,9 @@ function DeactivateTask ( TaskID )
         TaskObj.removeClass( "task_current" )
                .addClass( "task_inactive" );
     }
+
+    CloseObj.removeClass ( 'close_task_div_active' )
+            .addClass ( 'close_task_div_inactive' );
 
 } // DeactivateTask
 
@@ -253,21 +262,26 @@ function RemoveTask ( event )
 //------------------------------------------------------------------------------
 function MouseEnterTask ( event )
 {
-    var $this = $(this),
-        MainTaskDiv = $this.find( ".task_div" );
+    var $this       = $(this),
+        DivID       = $this.attr("id"),
+        TaskArr,
+        TaskDelim   = DivID.indexOf('_'),
+        TaskID      = DivID.substring(0,TaskDelim);
+        MainTaskDiv = $this.find( '.task_div' );
 
-    if ( MainTaskDiv.hasClass("task_inactive") )
+    if ( MainTaskDiv.hasClass('task_inactive') )
     {
-        MainTaskDiv.removeClass( "task_inactive" )
-                   .addClass( "task_mouseover" );
+        MainTaskDiv.removeClass( 'task_inactive' )
+                   .addClass( 'task_mouseover' );
+
     }
-    else if ( MainTaskDiv.hasClass("task_current") )
+    else if ( MainTaskDiv.hasClass('task_current') )
     {
-        MainTaskDiv.removeClass( "task_current" )
-                   .addClass( "task_current_mouseover" );
+        MainTaskDiv.removeClass( 'task_current' )
+                   .addClass( 'task_current_mouseover' );
     }
 
-    $this.find( ".close_task_div" ).show();
+    $this.find ( '#' + TaskID + '_remove' ).show();
 
 } // MouseEnterTask
 
@@ -279,8 +293,12 @@ function MouseEnterTask ( event )
 //------------------------------------------------------------------------------
 function MouseLeaveTask ( event )
 {
-    var $this = $(this),
-        MainTaskDiv = $this.find( ".task_div" );
+    var $this       = $(this),
+        DivID       = $this.attr("id"),
+        TaskArr,
+        TaskDelim   = DivID.indexOf('_'),
+        TaskID      = DivID.substring(0,TaskDelim);
+        MainTaskDiv = $this.find( '.task_div' );
 
     if ( MainTaskDiv.hasClass("task_mouseover") )
     {
@@ -293,7 +311,7 @@ function MouseLeaveTask ( event )
                    .addClass( "task_current" );
     }
 
-    $this.find( ".close_task_div" ).hide();
+    $this.find ( '#' + TaskID + '_remove' ).hide();
 
 } // MouseLeaveTask
 
@@ -327,7 +345,7 @@ function AddTask ( TaskID, Task )
     MainTaskDiv = $( '<div id="' + TaskID + '_main"' +
                      'class="main_task_div"></div>' );
     CloseButtonDiv = $( '<div id="' + TaskID + '_remove"' +
-                     'class="close_task_div">&times;</div>' );
+                     'class="close_task_div_inactive">&times;</div>' );
     TaskDiv = $( '<div id="' + TaskID + '" class="task_div task_inactive">' +
                      '<div>'            +
                           Task.Name     +
