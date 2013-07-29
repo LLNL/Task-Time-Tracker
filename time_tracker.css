@@ -32,12 +32,20 @@ form {
 }
 
 .close_task_div {
-    font-family: Cambria, sans-serif;
-    font-size: small;
-    position: absolute;
-    top: 0px;
-    left: 2px;
+    background: #a0a0a0;
+    border-radius: 4px;
+    color: #d4d4d4;
     width: 15px;
+    height: 13px;
+    line-height: 13px;
+    font-family: Helvetica Neue, sans-serif;
+    font-size: small;
+    text-align: center;
+    padding: 0px 0px 2px 0px;
+    position: absolute;
+    top: 2px;
+    left: 2px;
+  /*width: auto;*/
 }
 
 .task_div { 
@@ -45,7 +53,7 @@ form {
     font-family: Helvetica Neue, sans-serif;
     font-weight: 100;
     font-size: xx-large;
-    padding: 10px 10px 5px 10px;
+    padding: 10px;
     text-align: center;
 }
 
@@ -63,12 +71,12 @@ form {
 
 .task_mouseover {
     width: auto;
-    background: #d4d4d4;
+    background: #e4e4e4;
     border: 1px solid black;
 }
 
 .task_inactive {
     width: auto;
-    background: #d4d4d4;
-    border: 1px solid #d4d4d4;
+    background: #e4e4e4;
+    border: 1px solid #e4e4e4;
 }

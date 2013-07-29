@@ -253,18 +253,21 @@ function RemoveTask ( event )
 //------------------------------------------------------------------------------
 function MouseEnterTask ( event )
 {
-    var $this = $(this);
+    var $this = $(this),
+        MainTaskDiv = $this.find( ".task_div" );
 
-    if ( $this.hasClass("task_inactive") )
+    if ( MainTaskDiv.hasClass("task_inactive") )
     {
-        $this.removeClass( "task_inactive" )
-             .addClass( "task_mouseover" );
+        MainTaskDiv.removeClass( "task_inactive" )
+                   .addClass( "task_mouseover" );
     }
-    else if ( $this.hasClass("task_current") )
+    else if ( MainTaskDiv.hasClass("task_current") )
     {
-        $this.removeClass( "task_current" )
-             .addClass( "task_current_mouseover" );
+        MainTaskDiv.removeClass( "task_current" )
+                   .addClass( "task_current_mouseover" );
     }
+
+    $this.find( ".close_task_div" ).show();
 
 } // MouseEnterTask
 
@@ -276,18 +279,21 @@ function MouseEnterTask ( event )
 //------------------------------------------------------------------------------
 function MouseLeaveTask ( event )
 {
-    var $this = $(this);
+    var $this = $(this),
+        MainTaskDiv = $this.find( ".task_div" );
 
-    if ( $this.hasClass("task_mouseover") )
+    if ( MainTaskDiv.hasClass("task_mouseover") )
     {
-        $this.removeClass( "task_mouseover" )
-             .addClass( "task_inactive" );
+        MainTaskDiv.removeClass( "task_mouseover" )
+                   .addClass( "task_inactive" );
     }
-    else if ( $this.hasClass("task_current_mouseover") )
+    else if ( MainTaskDiv.hasClass("task_current_mouseover") )
     {
-        $this.removeClass( "task_current_mouseover" )
-             .addClass( "task_current" );
+        MainTaskDiv.removeClass( "task_current_mouseover" )
+                   .addClass( "task_current" );
     }
+
+    $this.find( ".close_task_div" ).hide();
 
 } // MouseLeaveTask
 
@@ -321,7 +327,7 @@ function AddTask ( TaskID, Task )
     MainTaskDiv = $( '<div id="' + TaskID + '_main"' +
                      'class="main_task_div"></div>' );
     CloseButtonDiv = $( '<div id="' + TaskID + '_remove"' +
-                     'class="close_task_div">&otimes;</div>' );
+                     'class="close_task_div">&times;</div>' );
     TaskDiv = $( '<div id="' + TaskID + '" class="task_div task_inactive">' +
                      '<div>'            +
                           Task.Name     +
@@ -337,12 +343,13 @@ function AddTask ( TaskID, Task )
 
     //
     //  Add click handlers.
+    CloseButtonDiv.hide();
     CloseButtonDiv.click ( RemoveTask );
     TaskDiv.click ( StartTimer );
 
     //
     //  Add combo MouseEnter and MouseLeave handler.
-    TaskDiv.hover( MouseEnterTask, MouseLeaveTask );
+    MainTaskDiv.hover( MouseEnterTask, MouseLeaveTask );
 
     //
     //  Add to the DOM.
