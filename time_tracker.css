@@ -3,6 +3,48 @@ form {
     padding-bottom: 15px;
 }
 
+#Form_TaskName {
+    border: 1px solid #a0a0a0;
+    border-radius: 4px 0px 0px 4px;
+    font-size: medium;
+    font-family: Helvetica Neue, sans-serif;
+    font-weight: 200;
+    height: 38px;
+  /*width: 30px;*/
+    margin: -3px;
+    padding: 0px;
+    padding-left: 5px;
+    vertical-align: middle;
+}
+
+#TrackTimeButton {
+    border: 1px solid #a0a0a0;
+    background: #e4e4e4;
+    font-size: medium;
+    font-family: Helvetica Neue, sans-serif;
+  /*border-radius: 4px 0px 0px 4px;*/
+    line-height: 40px;
+    height: 40px;
+    width: 40px;
+    margin: -3px;
+    padding: 0px;
+    vertical-align: middle;
+}
+
+#AddTaskButton {
+    border: 1px solid #a0a0a0;
+    background: #e4e4e4;
+    border-radius: 0px 4px 4px 0px;
+    font-size: medium;
+    font-family: Helvetica Neue, sans-serif;
+    line-height: 40px;
+    height: 40px;
+    width: 40px;
+    margin: -3px;
+    padding: 0px;
+    vertical-align: middle;
+}
+
 #TaskList {
    display: -webkit-box;   /* OLD: Safari, iOS, Android browser, older WebKit browsers. */
    display: -ms-flexbox;   /* MID: IE 10                                                */
@@ -34,7 +76,7 @@ form {
 .close_task_div_inactive {
     background: #a0a0a0;
     border-radius: 4px;
-    color: #d4d4d4;
+    color: #e4e4e4;
     width: 15px;
     height: 13px;
     line-height: 13px;
