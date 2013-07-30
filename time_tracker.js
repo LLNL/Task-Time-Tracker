@@ -202,7 +202,7 @@ function StartTimer ( event )
             Task.Hours      = TaskHours.toString();
             TaskArr[TaskID] = Task;
             SaveTaskArr ( TaskArr );
-        }, 1000); // SetInterval
+        }, 1000); // setInterval
 
         //
         //  Deactivate the previously current task, if there was one, record the
