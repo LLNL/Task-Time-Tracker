@@ -386,7 +386,7 @@ function SubmitTask ( event )
     var FormTextField = $( "#Form_TaskName" ),
         TaskArr,
         TaskName = FormTextField.val(),
-        TaskID   = NextTaskID();
+        TaskID   = -1;
 
 
     event.preventDefault();
@@ -415,6 +415,7 @@ function SubmitTask ( event )
         {
             //
             //  Add the task to local DOM storage and to the DOM.
+            TaskID = NextTaskID();
             AddTask ( TaskID,
                       { Name   : TaskName,
                         Hours  : 0,
@@ -423,6 +424,8 @@ function SubmitTask ( event )
         }
 
     } // End if ( TaskName.length > 0 ) 
+
+    return TaskID;
 
 } // SubmitTask
 
@@ -437,8 +440,25 @@ $(document).ready(function () {
         TaskID_int;
 
     //
+    //  Click handler for form buttons.
+    $( '#TrackTimeButton', '#AddTaskButton' ).on( 'click', function(event) {
+        var ButtonName = $(this).attr( 'id' ),
+            TaskID = 0;
+
+        TaskID = SubmitTask();
+
+        if ( ButtonName == 'TrackTimeButton' )
+        {
+            if ( TaskID >= 0 )
+            {
+                $( '#' + TaskID ).trigger ( 'click' ); 
+            }
+        }
+
+    });
+    //
     //  Submit handler for the task form.
-    $( "#TaskForm" ).submit( SubmitTask );
+    $( '#TaskForm' ).submit( SubmitTask );
 
     //
     //  Looks like a previous instance of this program stored some tasks in DOM
