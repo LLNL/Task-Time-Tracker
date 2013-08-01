@@ -77,6 +77,44 @@ function TaskAlreadyExistsinArr ( TaskArr, TaskName )
 
 //------------------------------------------------------------------------------
 //
+//  Via CSS, make the clicked button appear active until the mouse button is
+//  released.
+//
+//------------------------------------------------------------------------------
+function ActivateButton ( event )
+{
+    var $this = $(this);
+        
+    if ( $this.hasClass('inactive_button') )
+    {
+        $this.removeClass( 'inactive_button' )
+             .addClass( 'active_button' );
+    }
+
+} // ActivateTask
+
+
+//------------------------------------------------------------------------------
+//
+//  Via CSS, make the clicked button appear inactive.  This occurs right after
+//  the mouse button released.
+//
+//------------------------------------------------------------------------------
+function DeactivateButton ( event )
+{
+    var $this = $(this);
+        
+    if ( $this.hasClass('active_button') )
+    {
+        $this.removeClass( 'active_button' )
+             .addClass( 'inactive_button' );
+    }
+
+} // ActivateTask
+
+
+//------------------------------------------------------------------------------
+//
 //  Via CSS, make the task chiclet appear active.
 //
 //------------------------------------------------------------------------------
@@ -456,6 +494,10 @@ $(document).ready(function () {
     var TaskArr,
         TaskID_int;
 
+    $( '#AddTaskButton, #TrackTimeButton' ).on ( 'mousedown',
+                                                   ActivateButton )
+                                           .on ( 'mouseup',
+                                                   DeactivateButton );
     $( '#TrackTimeButton' ).on( 'click', function(event) {
         //
         //  Set the hidden form value to true to let the submit task
