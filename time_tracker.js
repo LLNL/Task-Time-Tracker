@@ -82,13 +82,18 @@ function TaskAlreadyExistsinArr ( TaskArr, TaskName )
 //------------------------------------------------------------------------------
 function ActivateTask ( TaskID )
 {
-    var TaskObj  = $( "#" + TaskID ),
-        CloseObj = TaskObj.parent().find( "#" + TaskID + "_remove" );
+    var TaskObj  = $( '#' + TaskID ),
+        CloseObj = TaskObj.parent().find( '#' + TaskID + '_remove' );
 
-    if ( TaskObj.hasClass("task_mouseover") )
+    if ( TaskObj.hasClass('task_mouseover') )
     {
-        TaskObj.removeClass( "task_mouseover" )
-               .addClass( "task_current_mouseover" );
+        TaskObj.removeClass( 'task_mouseover' )
+               .addClass( 'task_current_mouseover' );
+    }
+    else if ( TaskObj.hasClass( 'task_inactive' ) )
+    {
+        TaskObj.removeClass( 'task_inactive' )
+               .addClass( 'task_current' );
     }
 
     CloseObj.removeClass ( 'close_task_div_inactive' )
@@ -105,18 +110,18 @@ function ActivateTask ( TaskID )
 //------------------------------------------------------------------------------
 function DeactivateTask ( TaskID )
 {
-    var TaskObj = $( "#" + TaskID );
-        CloseObj = TaskObj.parent().find( "#" + TaskID + "_remove" );
+    var TaskObj = $( '#' + TaskID );
+        CloseObj = TaskObj.parent().find( '#' + TaskID + '_remove' );
 
-    if ( TaskObj.hasClass("task_current_mouseover") )
+    if ( TaskObj.hasClass('task_current_mouseover') )
     {
-        TaskObj.removeClass( "task_current_mouseover" ).
-                addClass( "task_mouseover" );
+        TaskObj.removeClass( 'task_current_mouseover' ).
+                addClass( 'task_mouseover' );
     }
-    else if ( TaskObj.hasClass("task_current") )
+    else if ( TaskObj.hasClass('task_current') )
     {
-        TaskObj.removeClass( "task_current" )
-               .addClass( "task_inactive" );
+        TaskObj.removeClass( 'task_current' )
+               .addClass( 'task_inactive' );
     }
 
     CloseObj.removeClass ( 'close_task_div_active' )
@@ -384,6 +389,8 @@ function AddTask ( TaskID, Task )
 function SubmitTask ( event )
 {
     var FormTextField = $( "#Form_TaskName" ),
+        StartTimerField = $( "#StartTimer" ),
+        StartTimer = StartTimerField.val(),
         TaskArr,
         TaskName = FormTextField.val(),
         TaskID   = -1;
@@ -392,13 +399,13 @@ function SubmitTask ( event )
     event.preventDefault();
     event.stopPropagation();
 
+    //
+    //  Clear the form's fields.
+    FormTextField.val( '' );
+    StartTimerField.val ( 0 );
 
     if ( TaskName.length > 0 )
     {
-        //
-        //  Clear the form's text field.
-        FormTextField.val( '' );
-
         //
         //  Retrieve the TaskArr from local DOM storage and check whether this
         //  task already exists.
@@ -421,6 +428,16 @@ function SubmitTask ( event )
                         Hours  : 0,
                         Minutes: 0,
                         Seconds: 0 } );
+
+            if ( StartTimer == 1 )
+            {
+                //
+                //  The user wants the timer started once the task has been
+                //  added to the DOM.  To start the timer, simulate a click
+                //  event on the task chiclet.
+                $( '#' + TaskID ).trigger ( 'click' );
+            }
+
         }
 
     } // End if ( TaskName.length > 0 ) 
@@ -432,30 +449,20 @@ function SubmitTask ( event )
 
 //------------------------------------------------------------------------------
 //
-//  Run once the DOM is fully rendered.  This is basically main().
+//  Run once the DOM is fully built.  This is basically main().
 //
 //------------------------------------------------------------------------------
 $(document).ready(function () {
     var TaskArr,
         TaskID_int;
 
-    //
-    //  Click handler for form buttons.
-    $( '#TrackTimeButton', '#AddTaskButton' ).on( 'click', function(event) {
-        var ButtonName = $(this).attr( 'id' ),
-            TaskID = 0;
-
-        TaskID = SubmitTask();
-
-        if ( ButtonName == 'TrackTimeButton' )
-        {
-            if ( TaskID >= 0 )
-            {
-                $( '#' + TaskID ).trigger ( 'click' ); 
-            }
-        }
-
+    $( '#TrackTimeButton' ).on( 'click', function(event) {
+        //
+        //  Set the hidden form value to true to let the submit task
+        //  handler know that the timer should also be started.
+        $( "#StartTimer" ).val ( 1 );
     });
+
     //
     //  Submit handler for the task form.
     $( '#TaskForm' ).submit( SubmitTask );
