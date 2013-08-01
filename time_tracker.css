@@ -19,8 +19,6 @@ form {
 
 #AddTaskButton {
     border: 1px solid #a0a0a0;
-    background: -webkit-linear-gradient(-90deg, white, #e4e4e4);
-    background: linear-gradient(180deg, white, #e4e4e4);
     font-size: medium;
     font-family: Helvetica Neue, sans-serif;
   /*border-radius: 4px 0px 0px 4px;*/
@@ -34,8 +32,6 @@ form {
 
 #TrackTimeButton {
     border: 1px solid #a0a0a0;
-    background: -webkit-linear-gradient(-90deg, white, #e4e4e4);
-    background: linear-gradient(180deg, white, #e4e4e4);
     border-radius: 0px 4px 4px 0px;
     font-size: medium;
     font-family: Helvetica Neue, sans-serif;
@@ -45,6 +41,16 @@ form {
     margin: -3px;
     padding: 0px;
     vertical-align: middle;
+}
+
+.active_button {
+    background: -webkit-linear-gradient(90deg, white, #e4e4e4);
+    background: linear-gradient(0deg, white, #e4e4e4);
+}
+
+.inactive_button {
+    background: -webkit-linear-gradient(-90deg, white, #e4e4e4);
+    background: linear-gradient(180deg, white, #e4e4e4);
 }
 
 #TaskList {
