@@ -53,6 +53,16 @@ form {
     background: linear-gradient(180deg, white, #e4e4e4);
 }
 
+#Plus {
+    height: 30px;
+    margin-top: 4px;
+}
+
+#Clock {
+    height: 35px;
+    margin-top: 2px;
+}
+
 #TaskList {
    display: -webkit-box;   /* OLD: Safari, iOS, Android browser, older WebKit browsers. */
    display: -ms-flexbox;   /* MID: IE 10                                                */
