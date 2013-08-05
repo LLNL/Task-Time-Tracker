@@ -43,21 +43,21 @@ form {
     vertical-align: middle;
 }
 
-.active_button {
-    background: -webkit-linear-gradient(90deg, white, #e4e4e4);
-    background: linear-gradient(0deg, white, #e4e4e4);
-}
-
-.inactive_button {
+button {
     background: -webkit-linear-gradient(-90deg, white, #e4e4e4);
     background: linear-gradient(180deg, white, #e4e4e4);
+}
+
+button:active {
+    background: -webkit-linear-gradient(90deg, white, #e4e4e4);
+    background: linear-gradient(0deg, white, #e4e4e4);
 }
 
 button img {
     opacity: .8;
 }
 
-button img:hover {
+button:hover img {
     opacity: 1;
 }
 
