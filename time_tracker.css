@@ -53,6 +53,14 @@ form {
     background: linear-gradient(180deg, white, #e4e4e4);
 }
 
+button img {
+    opacity: .8;
+}
+
+button img:hover {
+    opacity: 1;
+}
+
 #Plus {
     height: 30px;
     margin-top: 4px;
