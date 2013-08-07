@@ -9,7 +9,12 @@
 </head>
 <body>
     <form id="TaskForm">
-        <input id="Form_TaskName" title="Enter your task's name here" type="text" placeholder="Project / Task" />
+        <input id="Form_TaskName"
+               class="tooltip"
+               title="Enter your task's name here"
+               type="text"
+               data-tooltip="Enter your tasks' names here."
+               placeholder="Project / Task" />
         <input id="StartTimer" type="hidden" />
         <button id="AddTaskButton" title="Add task" type="submit"><img id="Plus" src="images/plus.png" /></button>
         <button id="TrackTimeButton" title="Start new task" type="submit"><img id="Clock" src="images/clock.png" /></button>

@@ -14,7 +14,36 @@ form {
     margin: -3px;
     padding: 0px;
     padding-left: 5px;
+    position: relative;
     vertical-align: middle;
+}
+
+input.tooltip::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 30px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 10px solid rgb(232,211,27);
+    z-index: 2;
+}
+
+input.tooltip::after {
+    content: attr(data-tooltip);
+    font-weight: normal;
+    position: absolute;
+    top: 50px;
+    right: 90px;
+    background: rgb(232,211,27);
+  /*border: 1px solid rgb(199,193,72);*/
+    border-radius: 10px;
+    padding: 10px;
+    white-space: nowrap;
+    width: auto;
+    z-index: 2;
 }
 
 #AddTaskButton {
