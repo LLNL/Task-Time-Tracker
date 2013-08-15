@@ -347,15 +347,15 @@ function AddTask( TaskID, Task )
 
     //
     //  Create the task chiclet.
-    MainTaskDiv = $( '<div id='' + TaskID + '_main'' +
-                     'class='main_task_div'></div>' );
-    CloseButtonDiv = $( '<div id='' + TaskID + '_remove'' +
-                     'class='close_task_div_inactive'>&times;</div>' );
-    TaskDiv = $( '<div id='' + TaskID + '' class='task_div task_inactive'>' +
+    MainTaskDiv = $( '<div id="' + TaskID + '_main"' +
+                     'class="main_task_div"></div>' );
+    CloseButtonDiv = $( '<div id="' + TaskID + '_remove"' +
+                     'class="close_task_div_inactive">&times;</div>' );
+    TaskDiv = $( '<div id="' + TaskID + '" class="task_div task_inactive">' +
                      '<div>'            +
                           Task.Name     +
                      '</div>'           +
-                     '<div id='timer'>' +
+                     '<div id="timer">' +
                           Task.Hours    + ':' +
                           Task.Minutes  + ':' +
                           Task.Seconds  +
