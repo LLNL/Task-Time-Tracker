@@ -12,9 +12,9 @@ var IntervalID = 0,
 //  Return the next Task ID to be used in the task chiclet DIV.
 //
 //------------------------------------------------------------------------------
-function NextTaskID ( )
+function NextTaskID( )
 {
-    return( ID++ );
+    return ( ID++ );
 }
 
 //------------------------------------------------------------------------------
@@ -24,14 +24,14 @@ function NextTaskID ( )
 //  return an empty JavaScript object.
 //
 //------------------------------------------------------------------------------
-function RetrieveTaskArr ( )
+function RetrieveTaskArr( )
 {
-    var TaskArr_JSON = "",
+    var TaskArr_JSON = '',
         TaskArr = {};
 
-    if ( localStorage.getItem("TaskArr") )
+    if ( localStorage.getItem('TaskArr') )
     {
-        TaskArr_JSON = localStorage.getItem("TaskArr");
+        TaskArr_JSON = localStorage.getItem('TaskArr');
         TaskArr      = JSON.parse(TaskArr_JSON);
     }
 
@@ -45,11 +45,11 @@ function RetrieveTaskArr ( )
 //  Convert the TaskArr to JSON and save it to local DOM storage.
 //
 //------------------------------------------------------------------------------
-function SaveTaskArr ( TaskArr )
+function SaveTaskArr( TaskArr )
 {
     var TaskArr_JSON = JSON.stringify(TaskArr);
 
-    localStorage.setItem("TaskArr", TaskArr_JSON);
+    localStorage.setItem('TaskArr', TaskArr_JSON);
 
 } // SaveTaskArr
 
@@ -60,17 +60,17 @@ function SaveTaskArr ( TaskArr )
 //  matches the give TaskName. Otherwise, return false.
 //
 //------------------------------------------------------------------------------
-function TaskAlreadyExistsinArr ( TaskArr, TaskName )
+function TaskAlreadyExistsinArr( TaskArr, TaskName )
 {
     for ( var Task in TaskArr )
     {
         if ( TaskArr[Task].Name == TaskName )
         {
-            return true;
+            return ( true );
         }
     }
 
-    return false;
+    return ( false );
 
 } // TaskAlreadyExistsinArr
 
@@ -80,7 +80,7 @@ function TaskAlreadyExistsinArr ( TaskArr, TaskName )
 //  Via CSS, make the task chiclet appear active.
 //
 //------------------------------------------------------------------------------
-function ActivateTask ( TaskID )
+function ActivateTask( TaskID )
 {
     var TaskObj  = $( '#' + TaskID ),
         CloseObj = TaskObj.parent().find( '#' + TaskID + '_remove' );
@@ -96,8 +96,8 @@ function ActivateTask ( TaskID )
                .addClass( 'task_current' );
     }
 
-    CloseObj.removeClass ( 'close_task_div_inactive' )
-            .addClass ( 'close_task_div_active' );
+    CloseObj.removeClass( 'close_task_div_inactive' )
+            .addClass( 'close_task_div_active' );
 
 
 } // ActivateTask
@@ -108,9 +108,9 @@ function ActivateTask ( TaskID )
 //  Via CSS, make the task chiclet appear inactive.
 //
 //------------------------------------------------------------------------------
-function DeactivateTask ( TaskID )
+function DeactivateTask( TaskID )
 {
-    var TaskObj = $( '#' + TaskID );
+    var TaskObj = $( '#' + TaskID ),
         CloseObj = TaskObj.parent().find( '#' + TaskID + '_remove' );
 
     if ( TaskObj.hasClass('task_current_mouseover') )
@@ -124,8 +124,8 @@ function DeactivateTask ( TaskID )
                .addClass( 'task_inactive' );
     }
 
-    CloseObj.removeClass ( 'close_task_div_active' )
-            .addClass ( 'close_task_div_inactive' );
+    CloseObj.removeClass( 'close_task_div_active' )
+            .addClass( 'close_task_div_inactive' );
 
 } // DeactivateTask
 
@@ -136,9 +136,9 @@ function DeactivateTask ( TaskID )
 //  start that task's timer.
 //
 //------------------------------------------------------------------------------
-function StartTimer ( event )
+function StartTimer( event )
 {
-    var TaskID = $(this).attr("id"),
+    var TaskID = $(this).attr('id'),
         $this  = $(this),
         Timer;
 
@@ -149,26 +149,26 @@ function StartTimer ( event )
         IntervalID = 0;
     }
     
-    if ( $this.attr("id") == localStorage.CurrentTaskID )
+    if ( $this.attr('id') == localStorage.CurrentTaskID )
     {
         //  User clicked on the current task.  Clear the current task, and be
         //  done.
-        DeactivateTask ( localStorage.CurrentTaskID );
-        localStorage.setItem( "CurrentTaskID", -1 );
+        DeactivateTask( localStorage.CurrentTaskID );
+        localStorage.setItem( 'CurrentTaskID', -1 );
     }
     else
     {
         //
         //  User clicked on a task other than the current task.  Start the timer
         //  and record which task is the current one.
-        IntervalID = setInterval(function () {
-            var TaskArr_JSON = "",
+        IntervalID = setInterval(function() {
+            var TaskArr_JSON = '',
                 TaskArr      = {},
                 TaskSeconds  = 0,
                 TaskMinutes  = 0,
                 TaskHours    = 0,
                 Task,
-                Timer = $this.find( "#timer" );
+                Timer = $this.find( '#timer' );
 
             TaskArr     = RetrieveTaskArr();
             Task        = TaskArr[TaskID];
@@ -198,7 +198,7 @@ function StartTimer ( event )
 
             //
             //  Update the timer in the DOM.
-            Timer.text(TaskHours + ":" + TaskMinutes + ":" + TaskSeconds);
+            Timer.text(TaskHours + ':' + TaskMinutes + ':' + TaskSeconds);
 
             //
             //  Save the updated timer to the TaskArr in local DOM storage.
@@ -206,20 +206,20 @@ function StartTimer ( event )
             Task.Minutes    = TaskMinutes.toString();
             Task.Hours      = TaskHours.toString();
             TaskArr[TaskID] = Task;
-            SaveTaskArr ( TaskArr );
+            SaveTaskArr( TaskArr );
         }, 1000); // setInterval
 
         //
         //  Deactivate the previously current task, if there was one, record the
         //  new current task's name, and active the new current task.
-        if ( localStorage.getItem("CurrentTaskID") )
+        if ( localStorage.getItem('CurrentTaskID') )
         {
-            DeactivateTask ( localStorage.CurrentTaskID );
+            DeactivateTask( localStorage.CurrentTaskID );
         }
-        localStorage.setItem ( "CurrentTaskID", TaskID );
-        ActivateTask ( localStorage.CurrentTaskID );
+        localStorage.setItem( 'CurrentTaskID', TaskID );
+        ActivateTask( localStorage.CurrentTaskID );
 
-    } // End of if ( $this.attr("id") == localStorage.CurrentTaskID )
+    } // End of if ( $this.attr('id') == localStorage.CurrentTaskID )
 
 }  // StartTimer
 
@@ -229,13 +229,13 @@ function StartTimer ( event )
 //  Remove a task from the DOM and from local DOM storage.
 //
 //------------------------------------------------------------------------------
-function RemoveTask ( event )
+function RemoveTask( event )
 {
     var $this     = $(this),
-        DivID     = $this.attr("id"),
+        DivID     = $this.attr('id'),
         TaskArr,
         TaskDelim = DivID.indexOf('_'),
-        TaskID    = DivID.substring(0,TaskDelim);
+        TaskID    = DivID.substring(0, TaskDelim);
 
     //
     //  Remove the Task from DOM storage.
@@ -250,7 +250,7 @@ function RemoveTask ( event )
         //  stop the timer and clear the related IntervalID.
         clearInterval( IntervalID );
         IntervalID = 0;
-        localStorage.setItem ( 'CurrentTaskID', -1 );
+        localStorage.setItem( 'CurrentTaskID', -1 );
     }
 
     //
@@ -265,13 +265,13 @@ function RemoveTask ( event )
 //  Via CSS, highlight the task chiclet currently under the curser.
 //
 //------------------------------------------------------------------------------
-function MouseEnterTask ( event )
+function MouseEnterTask( event )
 {
     var $this       = $(this),
-        DivID       = $this.attr("id"),
+        DivID       = $this.attr('id'),
         TaskArr,
         TaskDelim   = DivID.indexOf('_'),
-        TaskID      = DivID.substring(0,TaskDelim);
+        TaskID      = DivID.substring(0, TaskDelim),
         MainTaskDiv = $this.find( '.task_div' );
 
     if ( MainTaskDiv.hasClass('task_inactive') )
@@ -286,7 +286,7 @@ function MouseEnterTask ( event )
                    .addClass( 'task_current_mouseover' );
     }
 
-    $this.find ( '#' + TaskID + '_remove' ).show();
+    $this.find( '#' + TaskID + '_remove' ).show();
 
 } // MouseEnterTask
 
@@ -296,27 +296,27 @@ function MouseEnterTask ( event )
 //  Set the CSS of the task chiclet to un-highlighted.
 //
 //------------------------------------------------------------------------------
-function MouseLeaveTask ( event )
+function MouseLeaveTask( event )
 {
     var $this       = $(this),
-        DivID       = $this.attr("id"),
+        DivID       = $this.attr('id'),
         TaskArr,
         TaskDelim   = DivID.indexOf('_'),
-        TaskID      = DivID.substring(0,TaskDelim);
+        TaskID      = DivID.substring(0, TaskDelim),
         MainTaskDiv = $this.find( '.task_div' );
 
-    if ( MainTaskDiv.hasClass("task_mouseover") )
+    if ( MainTaskDiv.hasClass('task_mouseover') )
     {
-        MainTaskDiv.removeClass( "task_mouseover" )
-                   .addClass( "task_inactive" );
+        MainTaskDiv.removeClass( 'task_mouseover' )
+                   .addClass( 'task_inactive' );
     }
-    else if ( MainTaskDiv.hasClass("task_current_mouseover") )
+    else if ( MainTaskDiv.hasClass('task_current_mouseover') )
     {
-        MainTaskDiv.removeClass( "task_current_mouseover" )
-                   .addClass( "task_current" );
+        MainTaskDiv.removeClass( 'task_current_mouseover' )
+                   .addClass( 'task_current' );
     }
 
-    $this.find ( '#' + TaskID + '_remove' ).hide();
+    $this.find( '#' + TaskID + '_remove' ).hide();
 
 } // MouseLeaveTask
 
@@ -326,7 +326,7 @@ function MouseLeaveTask ( event )
 //  Add a task to the TaskArr in local DOM storage and to the DOM.
 //
 //------------------------------------------------------------------------------
-function AddTask ( TaskID, Task )
+function AddTask( TaskID, Task )
 {
     var CloseButtonDiv,
         MainTaskDiv,
@@ -339,36 +339,36 @@ function AddTask ( TaskID, Task )
     //  storage.
     //  Note:  the task may be in local DOM storage from a previous page
     //  instance even though it's not in the DOM.
-    if ( ! (TaskID in TaskArr) )
+    if ( !(TaskID in TaskArr) )
     {
         TaskArr[TaskID] = Task;
-        SaveTaskArr ( TaskArr );
+        SaveTaskArr( TaskArr );
     }
 
     //
     //  Create the task chiclet.
-    MainTaskDiv = $( '<div id="' + TaskID + '_main"' +
-                     'class="main_task_div"></div>' );
-    CloseButtonDiv = $( '<div id="' + TaskID + '_remove"' +
-                     'class="close_task_div_inactive">&times;</div>' );
-    TaskDiv = $( '<div id="' + TaskID + '" class="task_div task_inactive">' +
+    MainTaskDiv = $( '<div id='' + TaskID + '_main'' +
+                     'class='main_task_div'></div>' );
+    CloseButtonDiv = $( '<div id='' + TaskID + '_remove'' +
+                     'class='close_task_div_inactive'>&times;</div>' );
+    TaskDiv = $( '<div id='' + TaskID + '' class='task_div task_inactive'>' +
                      '<div>'            +
                           Task.Name     +
                      '</div>'           +
-                     '<div id="timer">' +
+                     '<div id='timer'>' +
                           Task.Hours    + ':' +
                           Task.Minutes  + ':' +
                           Task.Seconds  +
                      '</div>'           +
                  '</div>' );
-    MainTaskDiv.append ( CloseButtonDiv );
-    MainTaskDiv.append ( TaskDiv );
+    MainTaskDiv.append( CloseButtonDiv );
+    MainTaskDiv.append( TaskDiv );
 
     //
     //  Add click handlers.
     CloseButtonDiv.hide();
-    CloseButtonDiv.click ( RemoveTask );
-    TaskDiv.click ( StartTimer );
+    CloseButtonDiv.click( RemoveTask );
+    TaskDiv.click( StartTimer );
 
     //
     //  Add combo MouseEnter and MouseLeave handler.
@@ -376,7 +376,7 @@ function AddTask ( TaskID, Task )
 
     //
     //  Add to the DOM.
-    $( "#TaskList" ).append( MainTaskDiv );
+    $( '#TaskList' ).append( MainTaskDiv );
 
 } // AddTask 
 
@@ -386,10 +386,10 @@ function AddTask ( TaskID, Task )
 //  Submit handler for task submission form at top of page.
 //
 //------------------------------------------------------------------------------
-function SubmitTask ( event )
+function SubmitTask( event )
 {
-    var FormTextField = $( "#Form_TaskName" ),
-        StartTimerField = $( "#StartTimer" ),
+    var FormTextField = $( '#Form_TaskName' ),
+        StartTimerField = $( '#StartTimer' ),
         StartTimer = StartTimerField.val(),
         TaskArr,
         TaskName = FormTextField.val(),
@@ -402,7 +402,7 @@ function SubmitTask ( event )
     //
     //  Clear the form's fields.
     FormTextField.val( '' );
-    StartTimerField.val ( 0 );
+    StartTimerField.val( 0 );
 
     if ( TaskName.length > 0 )
     {
@@ -411,19 +411,19 @@ function SubmitTask ( event )
         //  task already exists.
         TaskArr = RetrieveTaskArr();
 
-        TaskExists = TaskAlreadyExistsinArr ( TaskArr, TaskName );
+        TaskExists = TaskAlreadyExistsinArr( TaskArr, TaskName );
         if ( TaskExists )
         {
             //
             //  Let the user know that this task already exists.
-            alert ( "That task already exists!" );
+            alert( 'That task already exists!' );
         }
         else
         {
             //
             //  Add the task to local DOM storage and to the DOM.
             TaskID = NextTaskID();
-            AddTask ( TaskID,
+            AddTask( TaskID,
                       { Name   : TaskName,
                         Hours  : 0,
                         Minutes: 0,
@@ -435,14 +435,14 @@ function SubmitTask ( event )
                 //  The user wants the timer started once the task has been
                 //  added to the DOM.  To start the timer, simulate a click
                 //  event on the task chiclet.
-                $( '#' + TaskID ).trigger ( 'click' );
+                $( '#' + TaskID ).trigger( 'click' );
             }
 
         }
 
     } // End if ( TaskName.length > 0 ) 
 
-    return TaskID;
+    return ( TaskID );
 
 } // SubmitTask
 
@@ -452,7 +452,7 @@ function SubmitTask ( event )
 //  Run once the DOM is fully built.  This is basically main().
 //
 //------------------------------------------------------------------------------
-$(document).ready(function () {
+$(document).ready(function() {
     var TaskArr,
         TaskID_int;
 
@@ -460,7 +460,7 @@ $(document).ready(function () {
         //
         //  Set the hidden form value to true to let the submit task
         //  handler know that the timer should also be started.
-        $( "#StartTimer" ).val ( 1 );
+        $( '#StartTimer' ).val( 1 );
     });
 
     //
@@ -474,11 +474,12 @@ $(document).ready(function () {
     for ( var TaskID in TaskArr )
     {
         //
-        //  TaskID comes from an array that's been stored in JSON format.  Every        //  scalar has been restored from JSON back into a JavaScript string.
+        //  TaskID comes from an array that's been stored in JSON format.  Every
+        //  scalar has been restored from JSON back into a JavaScript string.
         //  So, parse the ID into an int.
         TaskID_int = parseInt( TaskID );
 
-        AddTask ( TaskID, TaskArr[TaskID] );
+        AddTask( TaskID, TaskArr[TaskID] );
         if ( TaskID_int >= ID )
         {
             //
