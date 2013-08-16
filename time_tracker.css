@@ -6,7 +6,7 @@
  *
  *  This file is part of Task Time Tracker, a client-side web app that allows
  *  you to track time spent on arbitrary tasks.
- *  For details, see <URL>.
+ *  For details, see <https://bitbucket.org/gcleary/time-tracker/wiki/Home>.
  *
  *  Task Time Tracker is free software; you can redistribute it and/or modify
  *  it under the terms of the GNU General Public License as published by the
