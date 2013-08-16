@@ -1,7 +1,7 @@
 /*****************************************************************************\
  *  Copyright (C) 2013 Lawrence Livermore National Security, LLC.
  *  Produced at Lawrence Livermore National Laboratory (cf, DISCLAIMER).
- *  Written by Geoff Cleary <cleary3@llnl.gov>
+ *  Written by Geoff Cleary <gcleary@llnl.gov>
  *  LLNL-CODE-642434
  *
  *  This file is part of Task Time Tracker, a client-side web app that allows
