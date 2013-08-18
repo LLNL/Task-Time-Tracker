@@ -16,8 +16,18 @@
                data-tooltip="Enter your tasks' names here."
                placeholder="Project / Task" />
         <input id="StartTimer" type="hidden" />
-        <button id="AddTaskButton" title="Add task" type="submit"><img id="Plus" src="images/plus.png" /></button>
-        <button id="TrackTimeButton" title="Start new task" type="submit"><img id="Clock" src="images/clock.png" /></button>
+        <button id="AddTaskButton"
+                data-tooltip="Add the your task to the list of tasks below."
+                title="Add task"
+                type="submit">
+            <img id="Plus" src="images/plus.png" />
+        </button>
+        <button id="TrackTimeButton"
+                data-tooltip="Add your task to the list and immediately start the tasks's timer."
+                title="Start new task"
+                type="submit">
+            <img id="Clock" src="images/clock.png" />
+        </button>
     </form>
-    <div id="TaskList"></div>
+    <div data-tooltip="Your task list.&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;  Click a task to start and stop it's timer.  Hover the cursor over the task and it's close button will appear.  Click the close button to delete the task." id="TaskList"></div>
 </body>

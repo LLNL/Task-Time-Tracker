@@ -27,7 +27,7 @@ input.tooltip::before {
     height: 0;
     border-left: 5px solid transparent;
     border-right: 5px solid transparent;
-    border-bottom: 10px solid rgb(232,211,27);
+    border-bottom: 10px solid rgb(255,238,153);
     z-index: 2;
 }
 
@@ -37,10 +37,9 @@ input.tooltip::after {
     position: absolute;
     top: 50px;
     right: 90px;
-    background: rgb(232,211,27);
-  /*border: 1px solid rgb(199,193,72);*/
+    background: rgb(255,238,153);
     border-radius: 10px;
-    padding: 10px;
+    padding: 5px;
     white-space: nowrap;
     width: auto;
     z-index: 2;
@@ -56,7 +55,36 @@ input.tooltip::after {
     width: 40px;
     margin: -3px;
     padding: 0px;
+    position: relative;
     vertical-align: middle;
+}
+
+#AddTaskButton::before {
+    content: '';
+    position: absolute;
+    top: 40px;
+    left: 14px;
+    width: 0;
+    height: 0;
+    border-left: 5px solid transparent;
+    border-right: 5px solid transparent;
+    border-bottom: 10px solid rgb(255,238,153);
+    z-index: 2;
+}
+
+#AddTaskButton::after {
+    content: attr(data-tooltip);
+    font-weight: normal;
+    position: absolute;
+    top: 50px;
+    left: -68px;
+    background: rgb(255,238,153);
+    border-radius: 10px;
+    line-height: 16px;
+    padding: 5px;
+  /*white-space: nowrap;*/
+    width: auto;
+    z-index: 2;
 }
 
 #TrackTimeButton {
@@ -69,7 +97,35 @@ input.tooltip::after {
     width: 40px;
     margin: -3px;
     padding: 0px;
+    position: relative;
     vertical-align: middle;
+}
+
+#TrackTimeButton::before {
+    content: '';
+    position: absolute;
+    top: 14px;
+    left: 38px;
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-right: 10px solid rgb(255,238,153);
+    z-index: 2;
+}
+
+#TrackTimeButton::after {
+    content: attr(data-tooltip);
+    font-weight: normal;
+    position: absolute;
+    top: -1px;
+    left: 48px;
+    background: rgb(255,238,153);
+    border-radius: 10px;
+    line-height: 16px;
+    padding: 5px;
+    width: auto;
+    z-index: 2;
 }
 
 button {
@@ -101,25 +157,56 @@ button:hover img {
 }
 
 #TaskList {
-   display: -webkit-box;   /* OLD: Safari, iOS, Android browser, older WebKit browsers. */
-   display: -ms-flexbox;   /* MID: IE 10                                                */
-   display: -webkit-flex;  /* NEW, Chrome 21+                                           */
-   display: flex;          /* NEW: Opera 12.1, Firefox 22+                              */
+    font-size: medium;
+    font-family: Helvetica Neue, sans-serif;
+    position: relative;
 
-   -webkit-box-orient: vertical;
-   -ms-flex-direction: column;
-   -webkit-flex-direction: column;
-   flex-direction: column;
+    display: -webkit-box;   /* OLD: Safari, iOS, Android browser, older WebKit browsers. */
+    display: -ms-flexbox;   /* MID: IE 10                                                */
+    display: -webkit-flex;  /* NEW, Chrome 21+                                           */
+    display: flex;          /* NEW: Opera 12.1, Firefox 22+                              */
 
-   -webkit-box-align: center;
-   -ms-flex-align: center;
-   -webkit-align-items: center;
-   align-items: center;
+    -webkit-box-orient: vertical;
+    -ms-flex-direction: column;
+    -webkit-flex-direction: column;
+    flex-direction: column;
 
-   -webkit-box-pack: center;
-   -ms-flex-pack: center; 
-   -webkit-justify-content: center;
-   justify-content: center;
+    -webkit-box-align: center;
+    -ms-flex-align: center;
+    -webkit-align-items: center;
+    align-items: center;
+
+    -webkit-box-pack: center;
+    -ms-flex-pack: center; 
+    -webkit-justify-content: center;
+    justify-content: center;
+}
+
+#TaskList::before {
+    content: '';
+    position: absolute;
+    top: 118px;
+    left: 432px;
+    width: 0;
+    height: 0;
+    border-top: 5px solid transparent;
+    border-bottom: 5px solid transparent;
+    border-left: 10px solid rgb(255,238,153);
+    z-index: 2;
+}
+
+#TaskList::after {
+    content: attr(data-tooltip);
+    font-weight: normal;
+    position: absolute;
+    top: 100px;
+    left: 272px;
+    background: rgb(255,238,153);
+    border-radius: 10px;
+    line-height: 16px;
+    padding: 5px;
+    width: 150px;
+    z-index: 2;
 }
 
 .main_task_div {
