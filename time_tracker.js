@@ -357,6 +357,7 @@ function MouseLeaveTask( event )
 function AddTask( TaskID, Task )
 {
     var CloseButtonDiv,
+		DropDiv,
         MainTaskDiv,
         TaskDiv,
         TaskArr_JSON,
@@ -376,7 +377,7 @@ function AddTask( TaskID, Task )
     //
     //  Create the task chiclet.
     MainTaskDiv = $( '<div id="' + TaskID + '_main"' +
-                     'class="main_task_div"></div>' );
+                     'class="main_task_div" draggable="true"></div>' );
     CloseButtonDiv = $( '<div id="' + TaskID + '_remove"' +
                      'class="close_task_div_inactive">&times;</div>' );
     TaskDiv = $( '<div id="' + TaskID + '" class="task_div task_inactive">' +
@@ -389,8 +390,10 @@ function AddTask( TaskID, Task )
                           Task.Seconds  +
                      '</div>'           +
                  '</div>' );
+	DropDiv = $( '<div id="' + TaskID + '_drop" class="drop_target"></div>' );
     MainTaskDiv.append( CloseButtonDiv );
     MainTaskDiv.append( TaskDiv );
+	MainTaskDiv.append( DropDiv );
 
     //
     //  Add click handlers.
@@ -402,12 +405,24 @@ function AddTask( TaskID, Task )
     //  Add combo MouseEnter and MouseLeave handler.
     MainTaskDiv.hover( MouseEnterTask, MouseLeaveTask );
 
+	DropDiv.on( 'dragover', cancel );
+	DropDiv.on( 'dragenter', cancel );
+	DropDiv.on( 'drop', function(event) {
+		});
+
     //
     //  Add to the DOM.
     $( '#TaskList' ).append( MainTaskDiv );
 
 } // AddTask 
 
+function cancel( event )
+{
+	event.preventDefault();
+	event.stopPropagation();
+	
+	return false;
+}
 
 //------------------------------------------------------------------------------
 //

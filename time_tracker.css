@@ -160,6 +160,10 @@ button:hover img {
     left: 2px;
 }
 
+.drop_target {
+	height: 4px;
+}
+
 .task_div { 
     border-radius: 4px;
     font-family: Helvetica Neue, sans-serif;
