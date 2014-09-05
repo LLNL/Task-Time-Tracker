@@ -405,10 +405,10 @@ function AddTask( TaskID, Task )
     //  Add combo MouseEnter and MouseLeave handler.
     MainTaskDiv.hover( MouseEnterTask, MouseLeaveTask );
 
-	DropDiv.on( 'dragover', cancel );
-	DropDiv.on( 'dragenter', cancel );
-	DropDiv.on( 'drop', function(event) {
-		});
+    DropDiv.on( 'dragover', activateDropTarget );
+    DropDiv.on( 'dragenter', activateDropTarget );
+  /*DropDiv.on( 'drop', function(event) {
+        });*/
 
     //
     //  Add to the DOM.
@@ -416,11 +416,15 @@ function AddTask( TaskID, Task )
 
 } // AddTask 
 
-function cancel( event )
+function activateDropTarget( event )
 {
+    var $this = $(this);
+
 	event.preventDefault();
 	event.stopPropagation();
-	
+
+    $this.addClass( "active_drop_target" );
+
 	return false;
 }
 

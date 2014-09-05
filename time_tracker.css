@@ -161,7 +161,11 @@ button:hover img {
 }
 
 .drop_target {
-	height: 4px;
+    height: 4px;
+}
+
+.active_drop_target {
+    background-color: slategray;
 }
 
 .task_div { 
