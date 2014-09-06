@@ -376,8 +376,10 @@ function AddTask( TaskID, Task )
 
     //
     //  Create the task chiclet.
+    // TODO
+    // Every timer div is given the id of 'timer'. This is a bug: ID's should be unique.
     MainTaskDiv = $( '<div id="' + TaskID + '_main"' +
-                     'class="main_task_div" draggable="true"></div>' );
+                     'class="main_task_div" data-taskid="' + TaskID + '" draggable="true"></div>' );
     CloseButtonDiv = $( '<div id="' + TaskID + '_remove"' +
                      'class="close_task_div_inactive">&times;</div>' );
     TaskDiv = $( '<div id="' + TaskID + '" class="task_div task_inactive">' +
@@ -404,11 +406,22 @@ function AddTask( TaskID, Task )
     //
     //  Add combo MouseEnter and MouseLeave handler.
     MainTaskDiv.hover( MouseEnterTask, MouseLeaveTask );
+    MainTaskDiv.on( 'dragstart', function(event) {
+        if ( event.dataTransfer ) {
+            event.dataTransfer.setData( 'application/x-taskid', $(this).data('taskid') );
+            event.dataTransfer.setData( 'application/x-time', $(this).find('#timer').text() ); 
+        } else {
+            console.log( "dataTransfer not supported" );
+        }
+    });
 
     DropDiv.on( 'dragover', activateDropTarget );
     DropDiv.on( 'dragenter', activateDropTarget );
-  /*DropDiv.on( 'drop', function(event) {
-        });*/
+    DropDiv.on( 'dragleave', deactivateDropTarget );
+    DropDiv.on( 'drop', function(event) {
+        console.log( event.dataTransfer.getData('application/x-taskid') );
+        console.log( event.dataTransfer.getData('application/x-time') );
+    });
 
     //
     //  Add to the DOM.
@@ -418,12 +431,20 @@ function AddTask( TaskID, Task )
 
 function activateDropTarget( event )
 {
-    var $this = $(this);
-
 	event.preventDefault();
 	event.stopPropagation();
 
-    $this.addClass( "active_drop_target" );
+    $(this).prop( "class", "active_drop_target" );
+
+	return false;
+}
+
+function deactivateDropTarget( event )
+{
+	event.preventDefault();
+	event.stopPropagation();
+
+    $(this).prop( "class", "drop_target" );
 
 	return false;
 }

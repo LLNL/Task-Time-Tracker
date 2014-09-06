@@ -162,10 +162,13 @@ button:hover img {
 
 .drop_target {
     height: 4px;
+    transition: all 40ms ease;
 }
 
 .active_drop_target {
     background-color: slategray;
+    height: 30px;
+    transition: all 100ms ease;
 }
 
 .task_div { 
