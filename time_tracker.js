@@ -407,20 +407,28 @@ function AddTask( TaskID, Task )
     //  Add combo MouseEnter and MouseLeave handler.
     MainTaskDiv.hover( MouseEnterTask, MouseLeaveTask );
     MainTaskDiv.on( 'dragstart', function(event) {
-        if ( event.dataTransfer ) {
-            event.dataTransfer.setData( 'application/x-taskid', $(this).data('taskid') );
-            event.dataTransfer.setData( 'application/x-time', $(this).find('#timer').text() ); 
-        } else {
-            console.log( "dataTransfer not supported" );
-        }
+        event.originalEvent.dataTransfer.setData( 'application/x-taskid', $(this).data('taskid') );
     });
 
     DropDiv.on( 'dragover', activateDropTarget );
     DropDiv.on( 'dragenter', activateDropTarget );
     DropDiv.on( 'dragleave', deactivateDropTarget );
     DropDiv.on( 'drop', function(event) {
-        console.log( event.dataTransfer.getData('application/x-taskid') );
-        console.log( event.dataTransfer.getData('application/x-time') );
+        var TaskID = event.originalEvent.dataTransfer.getData('application/x-taskid');
+        var $theTask = $( '#' + TaskID + '_main' );
+
+        /*
+         * TODO
+         * this is just deactivateTarget(). Figure out some way to call that
+         * function here.
+         * The issue is how to make it operate on the correct jQuery object.
+         */
+        $(this).prop( "class", "drop_target" );
+
+        event.originalEvent.dataTransfer.clearData();
+
+        $theTask.detach();
+        $(this).parent().after( $theTask );
     });
 
     //
