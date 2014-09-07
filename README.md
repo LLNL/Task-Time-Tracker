@@ -19,13 +19,13 @@ Once you have downloaded—either via Git or a good ol' download—the program t
 
 # Supported Browsers #
 
-* Safari 6.x
+* Safari 6+
 * Chrome 21+
 * Firefox 22+
 * Opera 12.1
-* IE 10*
+* IE 10+*
 
-**I have not tested functionality on IE 10.  I believe it may work, but don't know for sure.*
+**I have not tested functionality on IE.  I believe it may work, but don't know for sure.*
 
 # A Note On Timer Accuracy #
 
