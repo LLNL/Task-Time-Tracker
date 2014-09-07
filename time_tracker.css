@@ -28,7 +28,7 @@
 
 form {
     text-align: center;
-    padding-bottom: 15px;
+    padding-top: 10px;
 }
 
 #Form_TaskName {
@@ -38,7 +38,6 @@ form {
     font-family: Helvetica Neue, sans-serif;
     font-weight: 200;
     height: 38px;
-  /*width: 30px;*/
     margin: -3px;
     padding: 0px;
     padding-left: 5px;
@@ -49,7 +48,6 @@ form {
     border: 1px solid #a0a0a0;
     font-size: medium;
     font-family: Helvetica Neue, sans-serif;
-  /*border-radius: 4px 0px 0px 4px;*/
     line-height: 40px;
     height: 40px;
     width: 40px;
@@ -100,9 +98,9 @@ button:hover img {
 }
 
 #TaskList {
-   display: -webkit-box;   /* OLD: Safari, iOS, Android browser, older WebKit browsers. */
+   display: -webkit-box;   /* OLD: Safari 6.0, iOS 6, Android browser, older WebKit browsers. */
    display: -ms-flexbox;   /* MID: IE 10                                                */
-   display: -webkit-flex;  /* NEW, Chrome 21+                                           */
+   display: -webkit-flex;  /* NEW: Chrome 21+, Safari 6.1+, iOS 7                       */
    display: flex;          /* NEW: Opera 12.1, Firefox 22+                              */
 
    -webkit-box-orient: vertical;
@@ -122,7 +120,6 @@ button:hover img {
 }
 
 .main_task_div {
-    padding-bottom: 2px;
     cursor: pointer;
     position: relative;
 }
@@ -141,7 +138,6 @@ button:hover img {
     position: absolute;
     top: 2px;
     left: 2px;
-  /*width: auto;*/
 }
 
 .close_task_div_active {
@@ -160,13 +156,18 @@ button:hover img {
     left: 2px;
 }
 
+#top_drop
+{
+    padding-top: 10px;
+    width: 250px;
+}
+
 .drop_target {
-    height: 4px;
-    transition: all 40ms ease;
+    height: 5px;
+    transition: all 100ms ease;
 }
 
 .active_drop_target {
-    background-color: slategray;
     height: 30px;
     transition: all 100ms ease;
 }

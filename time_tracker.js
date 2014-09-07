@@ -414,8 +414,8 @@ function AddTask( TaskID, Task )
     DropDiv.on( 'dragenter', activateDropTarget );
     DropDiv.on( 'dragleave', deactivateDropTarget );
     DropDiv.on( 'drop', function(event) {
-        var TaskID = event.originalEvent.dataTransfer.getData('application/x-taskid');
-        var $theTask = $( '#' + TaskID + '_main' );
+        var TaskID = event.originalEvent.dataTransfer.getData('application/x-taskid'),
+            $theTask = $( '#' + TaskID + '_main' );
 
         /*
          * TODO
@@ -427,8 +427,18 @@ function AddTask( TaskID, Task )
 
         event.originalEvent.dataTransfer.clearData();
 
+        //
+        // If a task chiclet has been dropped on its own drop target, then
+        // we're done here.
+        if ( $theTask.data('taskid') === $(this).parent().data('taskid') )
+        {
+            return( false );
+        }
+
         $theTask.detach();
         $(this).parent().after( $theTask );
+
+        return( false );
     });
 
     //
@@ -564,6 +574,34 @@ $(document).ready(function() {
             ID = TaskID_int + 1;
         }
     }
+
+    //
+    // Activate the drop target at the top of the task list.
+    $( '#top_drop' ).on( 'dragover dragenter', activateDropTarget )
+                    .on( 'dragleave', deactivateDropTarget )
+                    .on( 'drop', function(event) {
+        var TaskID = event.originalEvent.dataTransfer.getData('application/x-taskid');
+        var $theTask = $( '#' + TaskID + '_main' );
+
+        /*
+         * TODO
+         * this drop handler is essentially the same as the drop handler
+         * attached to the drop zone inside each task chiclet. The only
+         * difference is the last line of the handler. The handlers should be
+         * combined into one function.
+         *
+         * TODO
+         * this is just deactivateTarget(). Figure out some way to call that
+         * function here.
+         * The issue is how to make it operate on the correct jQuery object.
+         */
+        $(this).prop( "class", "drop_target" );
+
+        event.originalEvent.dataTransfer.clearData();
+
+        $theTask.detach();
+        $(this).after( $theTask );
+    });
 
 }); // $(document).ready()
 
