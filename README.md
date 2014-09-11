@@ -6,7 +6,7 @@ This web app will allow you to track the time you spend on various tasks.  It al
 
 The UI for the Task Timer program aims for simplicity.  In this case, a picture is sufficient to explain how to use the program:
 
-![A screenshot of the program's UI.](https://bytebucket.org/gcleary/time-tracker/wiki/UI.png)
+![A screenshot of the program's UI.](https://bytebucket.org/gcleary/time-tracker/wiki/UI.png?token=35f47d092208b5edcd02f8721ba4633df6d0c108)
 
 # Installation & Use #
 
