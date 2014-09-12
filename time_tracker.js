@@ -377,7 +377,9 @@ function AddTask( TaskID, Task )
     //
     //  Create the task chiclet.
     MainTaskDiv = $( '<div id="' + TaskID + '_main"' +
-                     'class="main_task_div" data-taskid="' + TaskID + '" draggable="true"></div>' );
+                     'class="main_task_div"'  +
+                     'data-taskid="' + TaskID + '"'  +
+                     'draggable="true"></div>' );
     CloseButtonDiv = $( '<div id="' + TaskID + '_remove"' +
                      'class="close_task_div_inactive">&times;</div>' );
     TaskDiv = $( '<div id="' + TaskID + '" class="task_div task_inactive">' +
@@ -405,45 +407,54 @@ function AddTask( TaskID, Task )
     //  Add combo MouseEnter and MouseLeave handler.
     MainTaskDiv.hover( MouseEnterTask, MouseLeaveTask )
                .on( 'dragstart', function(event) {
-        event.originalEvent.dataTransfer.setData( 'application/x-taskid', $(this).data('taskid') );
-    });
-
-    DropDiv.on( 'dragover', activateDropTarget );
-    DropDiv.on( 'dragenter', activateDropTarget );
-    DropDiv.on( 'dragleave', deactivateDropTarget );
-    DropDiv.on( 'drop', function(event) {
-        var TaskID = event.originalEvent.dataTransfer.getData('application/x-taskid'),
-            $theTask = $( '#' + TaskID + '_main' );
-
-        /*
-         * TODO
-         * this is just deactivateTarget(). Figure out some way to call that
-         * function here.
-         * The issue is how to make it operate on the correct jQuery object.
-         */
-        $(this).prop( "class", "drop_target" );
-
-        event.originalEvent.dataTransfer.clearData();
-
         //
-        // If a task chiclet has been dropped on its own drop target, then
-        // we're done here.
-        if ( $theTask.data('taskid') === $(this).parent().data('taskid') )
-        {
-            return( false );
-        }
-
-        $theTask.detach();
-        $(this).parent().after( $theTask );
-
-        return( false );
+        // Upon dragstart, save away the TaskID. This will be used to identify
+        // which task chiclet to move upon drop.
+        event.originalEvent.dataTransfer.setData( 'application/x-taskid',
+                                                  $(this).data('taskid') );
     });
+
+    //
+    //  Each task chiclet has a drop target at the bottom. Add drag handlers to
+    //  enable drag'n'drop.
+    DropDiv.on( 'dragover dragenter', activateDropTarget )
+           .on( 'dragleave', deactivateDropTarget )
+           .on( 'drop', dropOnTarget );
 
     //
     //  Add to the DOM.
     $( '#TaskList' ).append( MainTaskDiv );
 
 } // AddTask 
+
+function dropOnTarget( event )
+{
+    var TaskID = event.originalEvent.dataTransfer.getData('application/x-taskid'),
+        $theTask = $( '#' + TaskID + '_main' ),
+        $this = $(this);
+
+    $this.prop( "class", "drop_target" );
+
+    event.originalEvent.dataTransfer.clearData();
+
+    //
+    // If a task chiclet has been dropped on its own drop target, then
+    // we're done here.
+    if ( $theTask.data('taskid') === $this.parent().data('taskid') )
+    {
+        return( false );
+    }
+
+    $theTask.detach();
+
+    if ( $this.prop('id') === 'top_drop' ) {
+        $this.after( $theTask );
+    } else {
+        $this.parent().after( $theTask );
+    }
+
+    return( false );
+}
 
 function activateDropTarget( event )
 {
@@ -578,29 +589,7 @@ $(document).ready(function() {
     // Activate the drop target at the top of the task list.
     $( '#top_drop' ).on( 'dragover dragenter', activateDropTarget )
                     .on( 'dragleave', deactivateDropTarget )
-                    .on( 'drop', function(event) {
-        var TaskID = event.originalEvent.dataTransfer.getData('application/x-taskid');
-        var $theTask = $( '#' + TaskID + '_main' );
-
-        /*
-         * TODO
-         * this drop handler is essentially the same as the drop handler
-         * attached to the drop zone inside each task chiclet. The only
-         * difference is the last line of the handler. The handlers should be
-         * combined into one function.
-         *
-         * TODO
-         * this is just deactivateTarget(). Figure out some way to call that
-         * function here.
-         * The issue is how to make it operate on the correct jQuery object.
-         */
-        $(this).prop( "class", "drop_target" );
-
-        event.originalEvent.dataTransfer.clearData();
-
-        $theTask.detach();
-        $(this).after( $theTask );
-    });
+                    .on( 'drop', dropOnTarget ); 
 
 }); // $(document).ready()
 
