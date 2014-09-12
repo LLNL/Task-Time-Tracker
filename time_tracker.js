@@ -196,7 +196,7 @@ function StartTimer( event )
                 TaskMinutes  = 0,
                 TaskHours    = 0,
                 Task,
-                Timer = $this.find( '#timer' );
+                Timer = $this.find( '#' + TaskID + '_timer' );
 
             TaskArr     = RetrieveTaskArr();
             Task        = TaskArr[TaskID];
@@ -376,8 +376,6 @@ function AddTask( TaskID, Task )
 
     //
     //  Create the task chiclet.
-    // TODO
-    // Every timer div is given the id of 'timer'. This is a bug: ID's should be unique.
     MainTaskDiv = $( '<div id="' + TaskID + '_main"' +
                      'class="main_task_div" data-taskid="' + TaskID + '" draggable="true"></div>' );
     CloseButtonDiv = $( '<div id="' + TaskID + '_remove"' +
@@ -386,7 +384,7 @@ function AddTask( TaskID, Task )
                      '<div>'            +
                           Task.Name     +
                      '</div>'           +
-                     '<div id="timer">' +
+                     '<div id="' + TaskID + '_timer">' +
                           Task.Hours    + ':' +
                           Task.Minutes  + ':' +
                           Task.Seconds  +
