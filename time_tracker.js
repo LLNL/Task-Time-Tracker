@@ -540,6 +540,7 @@ function SubmitTask( event )
 //------------------------------------------------------------------------------
 $(document).ready(function() {
     var TaskArr,
+        TaskID,
         TaskID_int;
 
     $( '#TrackTimeButton' ).on( 'click', function(event) {
@@ -557,7 +558,7 @@ $(document).ready(function() {
     //  Looks like a previous instance of this program stored some tasks in DOM
     //  storage.  Retrieve and display them.
     TaskArr = RetrieveTaskArr();
-    for ( var TaskID in TaskArr )
+    for ( TaskID in TaskArr )
     {
         //
         //  TaskID comes from an array that's been stored in JSON format.  Every
