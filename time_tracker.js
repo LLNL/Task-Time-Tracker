@@ -405,8 +405,8 @@ function AddTask( TaskID, Task )
 
     //
     //  Add combo MouseEnter and MouseLeave handler.
-    MainTaskDiv.hover( MouseEnterTask, MouseLeaveTask );
-    MainTaskDiv.on( 'dragstart', function(event) {
+    MainTaskDiv.hover( MouseEnterTask, MouseLeaveTask )
+               .on( 'dragstart', function(event) {
         event.originalEvent.dataTransfer.setData( 'application/x-taskid', $(this).data('taskid') );
     });
 
