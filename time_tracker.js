@@ -427,14 +427,25 @@ function AddTask( TaskID, Task )
 
 } // AddTask 
 
+//------------------------------------------------------------------------------
+//
+//  The 'drop' event handler for each drop target. Each task chiclet has a drop
+//  target at the bottom. In addition, there's a drop target at the very top of
+//  the task list that isn't attached to a task chiclet.
+//
+//------------------------------------------------------------------------------
 function dropOnTarget( event )
 {
     var TaskID = event.originalEvent.dataTransfer.getData('application/x-taskid'),
         $theTask = $( '#' + TaskID + '_main' ),
         $this = $(this);
 
+    //
+    // Shrink the drop target back to normal size.
     $this.prop( "class", "drop_target" );
 
+    //
+    // Clean up the dataTransfer info.
     event.originalEvent.dataTransfer.clearData();
 
     //
@@ -444,6 +455,10 @@ function dropOnTarget( event )
     {
         return( false );
     }
+
+    //
+    // Remove the dragged and dropped task from the DOM and reattach it in the
+    // dropped location.
 
     $theTask.detach();
 
@@ -456,6 +471,12 @@ function dropOnTarget( event )
     return( false );
 }
 
+//------------------------------------------------------------------------------
+//
+//  When a task is dragged over a drop target, enlarge the target—via CSS—to
+//  indicate that the task can be dropped.
+//
+//------------------------------------------------------------------------------
 function activateDropTarget( event )
 {
 	event.preventDefault();
@@ -466,6 +487,11 @@ function activateDropTarget( event )
 	return false;
 }
 
+//------------------------------------------------------------------------------
+//
+//  Shrink a drop target when a 'dragleave' event occurs.
+//
+//------------------------------------------------------------------------------
 function deactivateDropTarget( event )
 {
 	event.preventDefault();
