@@ -445,10 +445,6 @@ function dropOnTarget( event )
     $this.prop( "class", "drop_target" );
 
     //
-    // Clean up the dataTransfer info.
-    event.originalEvent.dataTransfer.clearData();
-
-    //
     // If a task chiclet has been dropped on its own drop target, then
     // we're done here.
     if ( $theTask.data('taskid') === $this.parent().data('taskid') )
