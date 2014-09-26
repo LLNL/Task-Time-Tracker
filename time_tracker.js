@@ -1,5 +1,5 @@
 /*****************************************************************************\
- *  Copyright (C) 2013 Lawrence Livermore National Security, LLC.
+ *  Copyright (C) 2014 Lawrence Livermore National Security, LLC.
  *  Produced at Lawrence Livermore National Laboratory (cf, DISCLAIMER).
  *  Written by Geoff Cleary <gcleary@llnl.gov>
  *  LLNL-CODE-642434
@@ -196,7 +196,7 @@ function StartTimer( event )
                 TaskMinutes  = 0,
                 TaskHours    = 0,
                 Task,
-                Timer = $this.find( '#timer' );
+                Timer = $this.find( '#' + TaskID + '_timer' );
 
             TaskArr     = RetrieveTaskArr();
             Task        = TaskArr[TaskID];
@@ -357,6 +357,7 @@ function MouseLeaveTask( event )
 function AddTask( TaskID, Task )
 {
     var CloseButtonDiv,
+		DropDiv,
         MainTaskDiv,
         TaskDiv,
         TaskArr_JSON,
@@ -376,21 +377,25 @@ function AddTask( TaskID, Task )
     //
     //  Create the task chiclet.
     MainTaskDiv = $( '<div id="' + TaskID + '_main"' +
-                     'class="main_task_div"></div>' );
+                     'class="main_task_div"'  +
+                     'data-taskid="' + TaskID + '"'  +
+                     'draggable="true"></div>' );
     CloseButtonDiv = $( '<div id="' + TaskID + '_remove"' +
                      'class="close_task_div_inactive">&times;</div>' );
     TaskDiv = $( '<div id="' + TaskID + '" class="task_div task_inactive">' +
                      '<div>'            +
                           Task.Name     +
                      '</div>'           +
-                     '<div id="timer">' +
+                     '<div id="' + TaskID + '_timer">' +
                           Task.Hours    + ':' +
                           Task.Minutes  + ':' +
                           Task.Seconds  +
                      '</div>'           +
                  '</div>' );
+	DropDiv = $( '<div id="' + TaskID + '_drop" class="drop_target"></div>' );
     MainTaskDiv.append( CloseButtonDiv );
     MainTaskDiv.append( TaskDiv );
+	MainTaskDiv.append( DropDiv );
 
     //
     //  Add click handlers.
@@ -400,7 +405,21 @@ function AddTask( TaskID, Task )
 
     //
     //  Add combo MouseEnter and MouseLeave handler.
-    MainTaskDiv.hover( MouseEnterTask, MouseLeaveTask );
+    MainTaskDiv.hover( MouseEnterTask, MouseLeaveTask )
+               .on( 'dragstart', function(event) {
+        //
+        // Upon dragstart, save away the TaskID. This will be used to identify
+        // which task chiclet to move upon drop.
+        event.originalEvent.dataTransfer.setData( 'application/x-taskid',
+                                                  $(this).data('taskid') );
+    });
+
+    //
+    //  Each task chiclet has a drop target at the bottom. Add drag handlers to
+    //  enable drag'n'drop.
+    DropDiv.on( 'dragover dragenter', activateDropTarget )
+           .on( 'dragleave', deactivateDropTarget )
+           .on( 'drop', dropOnTarget );
 
     //
     //  Add to the DOM.
@@ -408,6 +427,76 @@ function AddTask( TaskID, Task )
 
 } // AddTask 
 
+//------------------------------------------------------------------------------
+//
+//  The 'drop' event handler for each drop target. Each task chiclet has a drop
+//  target at the bottom. In addition, there's a drop target at the very top of
+//  the task list that isn't attached to a task chiclet.
+//
+//------------------------------------------------------------------------------
+function dropOnTarget( event )
+{
+    var TaskID = event.originalEvent.dataTransfer.getData('application/x-taskid'),
+        $theTask = $( '#' + TaskID + '_main' ),
+        $this = $(this);
+
+    //
+    // Shrink the drop target back to normal size.
+    $this.prop( "class", "drop_target" );
+
+    //
+    // If a task chiclet has been dropped on its own drop target, then
+    // we're done here.
+    if ( $theTask.data('taskid') === $this.parent().data('taskid') )
+    {
+        return( false );
+    }
+
+    //
+    // Remove the dragged and dropped task from the DOM and reattach it in the
+    // dropped location.
+
+    $theTask.detach();
+
+    if ( $this.prop('id') === 'top_drop' ) {
+        $this.after( $theTask );
+    } else {
+        $this.parent().after( $theTask );
+    }
+
+    return( false );
+}
+
+//------------------------------------------------------------------------------
+//
+//  When a task is dragged over a drop target, enlarge the target—via CSS—to
+//  indicate that the task can be dropped.
+//
+//------------------------------------------------------------------------------
+function activateDropTarget( event )
+{
+	event.preventDefault();
+	event.stopPropagation();
+
+    $(this).prop( "class", "active_drop_target" );
+
+	return false;
+}
+
+//------------------------------------------------------------------------------
+//
+//  Shrink a drop target when a 'dragleave' event occurs.
+//
+//------------------------------------------------------------------------------
+function deactivateDropTarget( event )
+{
+	event.preventDefault();
+	event.stopPropagation();
+
+    $(this).prop( "class", "drop_target" );
+
+	return false;
+}
 
 //------------------------------------------------------------------------------
 //
@@ -482,6 +571,7 @@ function SubmitTask( event )
 //------------------------------------------------------------------------------
 $(document).ready(function() {
     var TaskArr,
+        TaskID,
         TaskID_int;
 
     $( '#TrackTimeButton' ).on( 'click', function(event) {
@@ -499,7 +589,7 @@ $(document).ready(function() {
     //  Looks like a previous instance of this program stored some tasks in DOM
     //  storage.  Retrieve and display them.
     TaskArr = RetrieveTaskArr();
-    for ( var TaskID in TaskArr )
+    for ( TaskID in TaskArr )
     {
         //
         //  TaskID comes from an array that's been stored in JSON format.  Every
@@ -516,6 +606,12 @@ $(document).ready(function() {
             ID = TaskID_int + 1;
         }
     }
+
+    //
+    // Activate the drop target at the top of the task list.
+    $( '#top_drop' ).on( 'dragover dragenter', activateDropTarget )
+                    .on( 'dragleave', deactivateDropTarget )
+                    .on( 'drop', dropOnTarget ); 
 
 }); // $(document).ready()
 
