@@ -26,6 +26,13 @@
  *      Boston, MA 02111-1307 USA
 \*****************************************************************************/
 
+@font-face {
+    font-family: TitilliumWeb;
+    font-weight: 200;
+    font-style: normal;
+    src: url('font/TitilliumWeb-ExtraLight.ttf') format('truetype');
+}
+
 form {
     text-align: center;
     padding-top: 10px;
@@ -35,7 +42,7 @@ form {
     border: 1px solid #a0a0a0;
     border-radius: 4px 0px 0px 4px;
     font-size: medium;
-    font-family: Helvetica Neue, sans-serif;
+    font-family: TitilliumWeb, sans-serif;
     font-weight: 200;
     height: 38px;
     margin: -3px;
@@ -47,7 +54,7 @@ form {
 #AddTaskButton {
     border: 1px solid #a0a0a0;
     font-size: medium;
-    font-family: Helvetica Neue, sans-serif;
+    font-family: TitilliumWeb, sans-serif;
     line-height: 40px;
     height: 40px;
     width: 40px;
@@ -60,7 +67,7 @@ form {
     border: 1px solid #a0a0a0;
     border-radius: 0px 4px 4px 0px;
     font-size: medium;
-    font-family: Helvetica Neue, sans-serif;
+    font-family: TitilliumWeb, sans-serif;
     line-height: 40px;
     height: 40px;
     width: 40px;
@@ -131,7 +138,7 @@ button:hover img {
     width: 15px;
     height: 13px;
     line-height: 13px;
-    font-family: Helvetica Neue, sans-serif;
+    font-family: TitilliumWeb, sans-serif;
     font-size: small;
     text-align: center;
     padding: 0px 0px 2px 0px;
@@ -147,7 +154,7 @@ button:hover img {
     width: 15px;
     height: 13px;
     line-height: 13px;
-    font-family: Helvetica Neue, sans-serif;
+    font-family: TitilliumWeb, sans-serif;
     font-size: small;
     text-align: center;
     padding: 0px 0px 2px 0px;
@@ -174,8 +181,7 @@ button:hover img {
 
 .task_div { 
     border-radius: 4px;
-    font-family: Helvetica Neue, sans-serif;
-    font-weight: 100;
+    font-family: TitilliumWeb, sans-serif;
     font-size: xx-large;
     padding: 12px;
     text-align: center;
