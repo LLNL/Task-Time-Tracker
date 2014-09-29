@@ -183,6 +183,7 @@ button:hover img {
     border-radius: 4px;
     font-family: TitilliumWeb, sans-serif;
     font-size: xx-large;
+    line-height: 1.1;
     padding: 12px;
     text-align: center;
 }
