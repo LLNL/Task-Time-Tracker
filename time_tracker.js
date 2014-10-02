@@ -138,7 +138,11 @@ function ActivateTask( TaskID )
 //------------------------------------------------------------------------------
 function DeactivateTask( TaskID )
 {
-    var TaskObj = $( '#' + TaskID ),
+    var ElapsedTime = 0,
+        Task     = {},
+        TaskArr  = [],
+        TaskObj  = $( '#' + TaskID ),
+        Timestamp = 0,
         CloseObj = TaskObj.parent().find( '#' + TaskID + '_remove' );
 
     if ( TaskObj.hasClass('task_current_mouseover') )
@@ -155,7 +159,36 @@ function DeactivateTask( TaskID )
     CloseObj.removeClass( 'close_task_div_active' )
             .addClass( 'close_task_div_inactive' );
 
+    TaskArr = RetrieveTaskArr();
+    Task = TaskArr[TaskID];
+    Timestamp = parseInt( Task.Timestamp );
+    ElapsedTime = parseInt( Task.ElapsedTime );
+    Task.ElapsedTime = ( ElapsedTime + (Timestamp-Date.now()) ).toString();
+    TaskArr[TaskID] = Task;
+    SaveTaskArr( TaskArr );
+
 } // DeactivateTask
+
+function ConvertMillisecondsToHoursMinsSecs( Milliseconds )
+{
+    var NumMillisecondsInHour   = 3600000,
+        NumMillisecondsInMinute = 60000,
+        NumMillisecondsInSecond = 1000,
+        Hours     = 0,
+        Minutes   = 0,
+        Seconds   = 0,
+        Remainder = 0;
+
+    Hours     = Milliseconds / NumMillisecondsInHour;
+    Remainder = Milliseconds % NumMillisecondsInHour;
+    Minutes   = Remainder / NumMillisecondsInMinute;
+    Remainder = Remainder % NumMillisecondsInMinute;
+    Seconds   = Remainder / NumMillisecondsInSecond;
+
+    return( { 'Hours'  : Hours,
+              'Minutes': Minutes,
+              'Seconds': Seconds } );
+}
 
 
 //------------------------------------------------------------------------------
@@ -190,49 +223,65 @@ function StartTimer( event )
         //  User clicked on a task other than the current task.  Start the timer
         //  and record which task is the current one.
         IntervalID = setInterval(function() {
-            var TaskArr_JSON = '',
-                TaskArr      = {},
-                TaskSeconds  = 0,
-                TaskMinutes  = 0,
-                TaskHours    = 0,
+            var ElapsedTime   = 0,
+                HoursMinsSecs = {},
+                Interval      = 0,
+                TaskArr_JSON  = '',
+                TaskArr       = {},
+                TaskSeconds   = 0,
+                TaskMinutes   = 0,
+                TaskHours     = 0,
+                TaskTimestamp = 0,
                 Task,
                 Timer = $this.find( '#' + TaskID + '_timer' );
 
-            TaskArr     = RetrieveTaskArr();
-            Task        = TaskArr[TaskID];
-            TaskSeconds = parseInt(Task.Seconds);
-            TaskMinutes = parseInt(Task.Minutes);
-            TaskHours   = parseInt(Task.Hours);
+            TaskArr       = RetrieveTaskArr();
+            Task          = TaskArr[TaskID];
+            //TaskSeconds   = parseInt(Task.Seconds);
+            //TaskMinutes   = parseInt(Task.Minutes);
+            //TaskHours     = parseInt(Task.Hours);
+            ElapsedTime   = parseInt(Task.ElapsedTime);
+            TaskTimestamp = parseInt(Task.Timestamp);
+
+            //  How long has it been since the timer was last started?
+            Interval = Date.now() - TaskTimestamp;
+            HoursMinsSecs = ConvertMillisecondsToHoursMinsSecs( Interval + ElapsedTime );
 
             //
             //  Add one second to the timer.
-            if ( TaskSeconds == 59 )
-            {
-                TaskSeconds = 0;
-                if ( TaskMinutes == 59 )
-                {
-                    TaskMinutes = 0;
-                    TaskHours++;
-                }
-                else
-                {
-                    TaskMinutes++;
-                }
-            }
-            else
-            {
-                TaskSeconds++;
-            }
+            //if ( TaskSeconds == 59 )
+            //{
+            //    TaskSeconds = 0;
+            //    if ( TaskMinutes == 59 )
+            //    {
+            //        TaskMinutes = 0;
+            //        TaskHours++;
+            //    }
+            //    else
+            //    {
+            //        TaskMinutes++;
+            //    }
+            //}
+            //else
+            //{
+            //    TaskSeconds++;
+            //}
 
             //
             //  Update the timer in the DOM.
-            Timer.text(TaskHours + ':' + TaskMinutes + ':' + TaskSeconds);
+            Timer.text(HoursMinsSecs.Hours + ':' + HoursMinsSecs.Minutes + ':' + HoursMinsSecs.Seconds);
 
             //
             //  Save the updated timer to the TaskArr in local DOM storage.
-            Task.Seconds    = TaskSeconds.toString();
-            Task.Minutes    = TaskMinutes.toString();
-            Task.Hours      = TaskHours.toString();
+            //
+            //  TODO
+            //  I don't think I need to save much of this on the interval.
+            //  Rather, I'm saving away the elapsed time when the task timer is
+            //  stopped. That should be sufficient?
+            Task.Seconds    = HoursMinsSecs.Seconds.toString();
+            Task.Minutes    = HoursMinsSecs.Minutes.toString();
+            Task.Hours      = HoursMinsSecs.Hours.toString();
+            Task.ElapsedTime = Interval;
             TaskArr[TaskID] = Task;
             SaveTaskArr( TaskArr );
         }, 1000); // setInterval
@@ -510,7 +559,8 @@ function SubmitTask( event )
         StartTimer = StartTimerField.val(),
         TaskArr,
         TaskName = FormTextField.val(),
-        TaskID   = -1;
+        TaskID   = -1,
+        Timestamp = Date.now();
 
 
     event.preventDefault();
@@ -541,10 +591,12 @@ function SubmitTask( event )
             //  Add the task to local DOM storage and to the DOM.
             TaskID = NextTaskID();
             AddTask( TaskID,
-                      { Name   : TaskName,
-                        Hours  : 0,
-                        Minutes: 0,
-                        Seconds: 0 } );
+                      { 'Name'       : TaskName,
+                        'Timestamp'  : Timestamp,
+                        'ElapsedTime': 0,
+                        'Hours'      : 0,
+                        'Minutes'    : 0,
+                        'Seconds'    : 0 } );
 
             if ( StartTimer == 1 )
             {
