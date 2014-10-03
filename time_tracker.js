@@ -138,7 +138,7 @@ function ActivateTask( TaskID )
 //------------------------------------------------------------------------------
 function DeactivateTask( TaskID )
 {
-    var ElapsedTime = 0,
+    var TotElapsedTime = 0,
         Task     = {},
         TaskArr  = [],
         TaskObj  = $( '#' + TaskID ),
@@ -162,8 +162,8 @@ function DeactivateTask( TaskID )
     TaskArr = RetrieveTaskArr();
     Task = TaskArr[TaskID];
     Timestamp = parseInt( Task.Timestamp );
-    ElapsedTime = parseInt( Task.ElapsedTime );
-    Task.ElapsedTime = ( ElapsedTime + (Date.now()-Timestamp) ).toString();
+    TotElapsedTime = parseInt( Task.TotElapsedTime );
+    Task.TotElapsedTime = ( TotElapsedTime + (Date.now()-Timestamp) ).toString();
     TaskArr[TaskID] = Task;
     SaveTaskArr( TaskArr );
 
@@ -253,7 +253,7 @@ function StartTimer( event )
         //  User clicked on a task other than the current task.  Start the timer
         //  and record which task is the current one.
         IntervalID = setInterval(function() {
-            var ElapsedTime   = 0,
+            var TotElapsedTime   = 0,
                 HoursMinsSecs = {},
                 Interval      = 0,
                 TaskArr_JSON  = '',
@@ -270,12 +270,14 @@ function StartTimer( event )
             //TaskSeconds   = parseInt(Task.Seconds);
             //TaskMinutes   = parseInt(Task.Minutes);
             //TaskHours     = parseInt(Task.Hours);
-            ElapsedTime   = parseInt(Task.ElapsedTime);
+            TotElapsedTime   = parseInt(Task.TotElapsedTime);
             TaskTimestamp = parseInt(Task.Timestamp);
 
             //  How long has it been since the timer was started?
             Interval = Date.now() - TaskTimestamp;
-            HoursMinsSecs = ConvertMillisecondsToHoursMinsSecs( Interval + ElapsedTime );
+
+            //  Convert the total running time, in ms, to hours/mins/secs.
+            HoursMinsSecs = ConvertMillisecondsToHoursMinsSecs( Interval + TotElapsedTime );
 
             //
             //  Add one second to the timer.
@@ -311,6 +313,11 @@ function StartTimer( event )
             Task.Seconds    = HoursMinsSecs.Seconds.toString();
             Task.Minutes    = HoursMinsSecs.Minutes.toString();
             Task.Hours      = HoursMinsSecs.Hours.toString();
+            //  Save off how much time has passed since the timer was last
+            //  started so that, if the window is closed while the timer is
+            //  still running, we can properly restore the task when the page is
+            //  re-opened.
+            Task.ElapsedSince = Interval.toString();
             TaskArr[TaskID] = Task;
             SaveTaskArr( TaskArr );
         }, 1000); // setInterval
@@ -443,7 +450,8 @@ function AddTask( TaskID, Task )
         MainTaskDiv,
         TaskDiv,
         TaskArr_JSON,
-        TaskArr = RetrieveTaskArr();
+        TaskArr = RetrieveTaskArr(),
+        Time = 0;
 
     //
     //  If we haven't yet run across this task, save it into local DOM
@@ -456,7 +464,8 @@ function AddTask( TaskID, Task )
         SaveTaskArr( TaskArr );
     }
 
-    HoursMinsSecs = ConvertMillisecondsToHoursMinsSecs( Task.ElapsedTime );
+    Time = parseInt( Task.TotElapsedTime ) + parseInt( Task.ElapsedSince );
+    HoursMinsSecs = ConvertMillisecondsToHoursMinsSecs( Time );
 
     //
     //  Create the task chiclet.
@@ -625,12 +634,13 @@ function SubmitTask( event )
             //  Add the task to local DOM storage and to the DOM.
             TaskID = NextTaskID();
             AddTask( TaskID,
-                      { 'Name'       : TaskName,
-                        'Timestamp'  : 0,
-                        'ElapsedTime': 0,
-                        'Hours'      : 0,
-                        'Minutes'    : 0,
-                        'Seconds'    : 0 } );
+                      { 'Name'          : TaskName,
+                        'Timestamp'     : 0,
+                        'TotElapsedTime': 0,
+                        'ElapsedSince'  : 0,
+                        'Hours'         : 0,
+                        'Minutes'       : 0,
+                        'Seconds'       : 0 } );
 
             if ( StartTimer == 1 )
             {
