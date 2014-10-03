@@ -179,11 +179,33 @@ function ConvertMillisecondsToHoursMinsSecs( Milliseconds )
         Seconds   = 0,
         Remainder = 0;
 
-    Hours     = Milliseconds / NumMillisecondsInHour;
-    Remainder = Milliseconds % NumMillisecondsInHour;
-    Minutes   = Remainder / NumMillisecondsInMinute;
-    Remainder = Remainder % NumMillisecondsInMinute;
-    Seconds   = Remainder / NumMillisecondsInSecond;
+  //  if ( Milliseconds === 0 )
+  //  {
+  //      return( { 'Hours'  : 0,
+  //                'Minutes': 0,
+  //                'Seconds': 0 } );
+  //  }
+
+    if ( Milliseconds >= NumMillisecondsInHour )
+    {
+        Hours     = Math.floor( Milliseconds / NumMillisecondsInHour );
+        Remainder = Milliseconds % NumMillisecondsInHour;
+    }
+    else
+    {
+        Remainder = Milliseconds;
+    }
+    
+    if ( Remainder >= NumMillisecondsInMinute )
+    {
+        Minutes   = Math.floor( Remainder / NumMillisecondsInMinute );
+        Remainder = Remainder % NumMillisecondsInMinute;
+    }
+
+    if ( Remainder >= NumMillisecondsInSecond )
+    {
+        Seconds = Math.round( Remainder / NumMillisecondsInSecond );
+    }
 
     return( { 'Hours'  : Hours,
               'Minutes': Minutes,
@@ -219,6 +241,14 @@ function StartTimer( event )
     }
     else
     {
+        TaskArr = RetrieveTaskArr();
+        // TODO
+        // TaskArr[TaskID].Timestamp = Date.now().toString()?
+        Task = TaskArr[TaskID];
+        Task.Timestamp = Date.now().toString();
+        TaskArr[TaskID] = Task;
+        SaveTaskArr( TaskArr );
+
         //
         //  User clicked on a task other than the current task.  Start the timer
         //  and record which task is the current one.
@@ -243,7 +273,7 @@ function StartTimer( event )
             ElapsedTime   = parseInt(Task.ElapsedTime);
             TaskTimestamp = parseInt(Task.Timestamp);
 
-            //  How long has it been since the timer was last started?
+            //  How long has it been since the timer was started?
             Interval = Date.now() - TaskTimestamp;
             HoursMinsSecs = ConvertMillisecondsToHoursMinsSecs( Interval + ElapsedTime );
 
@@ -281,7 +311,6 @@ function StartTimer( event )
             Task.Seconds    = HoursMinsSecs.Seconds.toString();
             Task.Minutes    = HoursMinsSecs.Minutes.toString();
             Task.Hours      = HoursMinsSecs.Hours.toString();
-            Task.ElapsedTime = Interval;
             TaskArr[TaskID] = Task;
             SaveTaskArr( TaskArr );
         }, 1000); // setInterval
@@ -407,6 +436,7 @@ function AddTask( TaskID, Task )
 {
     var CloseButtonDiv,
 		DropDiv,
+        HoursMinsSecs = {},
         MainTaskDiv,
         TaskDiv,
         TaskArr_JSON,
@@ -423,6 +453,8 @@ function AddTask( TaskID, Task )
         SaveTaskArr( TaskArr );
     }
 
+    HoursMinsSecs = ConvertMillisecondsToHoursMinsSecs( Task.ElapsedTime );
+
     //
     //  Create the task chiclet.
     MainTaskDiv = $( '<div id="' + TaskID + '_main"' +
@@ -432,14 +464,14 @@ function AddTask( TaskID, Task )
     CloseButtonDiv = $( '<div id="' + TaskID + '_remove"' +
                      'class="close_task_div_inactive">&times;</div>' );
     TaskDiv = $( '<div id="' + TaskID + '" class="task_div task_inactive">' +
-                     '<div>'            +
-                          Task.Name     +
-                     '</div>'           +
+                     '<div>'              +
+                          Task.Name       +
+                     '</div>'             +
                      '<div id="' + TaskID + '_timer">' +
-                          Task.Hours    + ':' +
-                          Task.Minutes  + ':' +
-                          Task.Seconds  +
-                     '</div>'           +
+                          HoursMinsSecs.Hours    + ':' +
+                          HoursMinsSecs.Minutes  + ':' +
+                          HoursMinsSecs.Seconds  +
+                     '</div>'             +
                  '</div>' );
 	DropDiv = $( '<div id="' + TaskID + '_drop" class="drop_target"></div>' );
     MainTaskDiv.append( CloseButtonDiv );
