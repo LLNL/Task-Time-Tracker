@@ -305,19 +305,10 @@ function StartTimer( event )
             Timer.text(HoursMinsSecs.Hours + ':' + HoursMinsSecs.Minutes + ':' + HoursMinsSecs.Seconds);
 
             //
-            //  Save the updated timer to the TaskArr in local DOM storage.
-            //
-            //  TODO
-            //  I don't think I need to save much of this on the interval.
-            //  Rather, I'm saving away the elapsed time when the task timer is
-            //  stopped. That should be sufficient?
-            Task.Seconds    = HoursMinsSecs.Seconds.toString();
-            Task.Minutes    = HoursMinsSecs.Minutes.toString();
-            Task.Hours      = HoursMinsSecs.Hours.toString();
-            //  Save off how much time has passed since the timer was last
-            //  started so that, if the window is closed while the timer is
-            //  still running, we can properly restore the task when the page is
-            //  re-opened.
+            //  Save, to DOM local storage, how much time has passed since the
+            //  timer was last started so that, if the window is closed while
+            //  the timer is still running, we can properly restore the task
+            //  when the page is re-opened.
             Task.ElapsedSince = Interval.toString();
             TaskArr[TaskID] = Task;
             SaveTaskArr( TaskArr );
@@ -633,13 +624,7 @@ function SubmitTask( event )
         TaskArr = RetrieveTaskArr();
 
         TaskExists = TaskAlreadyExistsinArr( TaskArr, TaskName );
-        if ( TaskExists )
-        {
-            //
-            //  Let the user know that this task already exists.
-            alert( 'That task already exists!' );
-        }
-        else
+        if ( ! TaskExists )
         {
             //
             //  Add the task to local DOM storage and to the DOM.
@@ -648,10 +633,7 @@ function SubmitTask( event )
                       { 'Name'          : TaskName,
                         'Timestamp'     : 0,
                         'TotElapsedTime': 0,
-                        'ElapsedSince'  : 0,
-                        'Hours'         : 0,
-                        'Minutes'       : 0,
-                        'Seconds'       : 0 } );
+                        'ElapsedSince'  : 0 } );
 
             if ( StartTimer == 1 )
             {
@@ -662,6 +644,12 @@ function SubmitTask( event )
                 $( '#' + TaskID ).trigger( 'click' );
             }
 
+        }
+        else
+        {
+            //
+            //  Let the user know that this task already exists.
+            alert( 'That task already exists!' );
         }
 
     } // End if ( TaskName.length > 0 ) 
