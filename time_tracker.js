@@ -164,6 +164,7 @@ function DeactivateTask( TaskID )
     Timestamp = parseInt( Task.Timestamp );
     TotElapsedTime = parseInt( Task.TotElapsedTime );
     Task.TotElapsedTime = ( TotElapsedTime + (Date.now()-Timestamp) ).toString();
+    Task.ElapsedSince = "0";
     TaskArr[TaskID] = Task;
     SaveTaskArr( TaskArr );
 
@@ -464,8 +465,18 @@ function AddTask( TaskID, Task )
         SaveTaskArr( TaskArr );
     }
 
-    Time = parseInt( Task.TotElapsedTime ) + parseInt( Task.ElapsedSince );
-    HoursMinsSecs = ConvertMillisecondsToHoursMinsSecs( Time );
+    // Recover a timer that was running when the page was last closed.
+    if ( parseInt(Task.ElapsedSince) > 0 )
+    {
+        Time = parseInt( Task.TotElapsedTime ) + parseInt( Task.ElapsedSince );
+        Task.TotElapsedTime = Time.toString();
+        Task.ElapsedSince = "0";
+        Task.Timestamp = "0";
+        TaskArr[TaskID] = Task;
+        SaveTaskArr( TaskArr );
+    }
+
+    HoursMinsSecs = ConvertMillisecondsToHoursMinsSecs( parseInt(Task.TotElapsedTime) );
 
     //
     //  Create the task chiclet.
@@ -669,6 +680,8 @@ $(document).ready(function() {
     var TaskArr,
         TaskID,
         TaskID_int;
+
+    localStorage.setItem( 'CurrentTaskID', -1 );
 
     $( '#TrackTimeButton' ).on( 'click', function(event) {
         //
