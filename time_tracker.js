@@ -163,7 +163,7 @@ function DeactivateTask( TaskID )
     Task = TaskArr[TaskID];
     Timestamp = parseInt( Task.Timestamp );
     ElapsedTime = parseInt( Task.ElapsedTime );
-    Task.ElapsedTime = ( ElapsedTime + (Timestamp-Date.now()) ).toString();
+    Task.ElapsedTime = ( ElapsedTime + (Date.now()-Timestamp) ).toString();
     TaskArr[TaskID] = Task;
     SaveTaskArr( TaskArr );
 
@@ -320,7 +320,10 @@ function StartTimer( event )
         //  new current task's name, and active the new current task.
         if ( localStorage.getItem('CurrentTaskID') )
         {
-            DeactivateTask( localStorage.CurrentTaskID );
+            if ( parseInt(localStorage.CurrentTaskID) !== -1 )
+            {
+                DeactivateTask( localStorage.CurrentTaskID );
+            }
         }
         localStorage.setItem( 'CurrentTaskID', TaskID );
         ActivateTask( localStorage.CurrentTaskID );
@@ -590,9 +593,8 @@ function SubmitTask( event )
         StartTimerField = $( '#StartTimer' ),
         StartTimer = StartTimerField.val(),
         TaskArr,
-        TaskName = FormTextField.val(),
-        TaskID   = -1,
-        Timestamp = Date.now();
+        TaskName   = FormTextField.val(),
+        TaskID     = -1;
 
 
     event.preventDefault();
@@ -624,7 +626,7 @@ function SubmitTask( event )
             TaskID = NextTaskID();
             AddTask( TaskID,
                       { 'Name'       : TaskName,
-                        'Timestamp'  : Timestamp,
+                        'Timestamp'  : 0,
                         'ElapsedTime': 0,
                         'Hours'      : 0,
                         'Minutes'    : 0,
