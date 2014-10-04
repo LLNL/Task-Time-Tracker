@@ -33,6 +33,13 @@
     src: url('font/TitilliumWeb-ExtraLight.ttf') format('truetype');
 }
 
+@font-face {
+  font-family: fontello;
+  src: url('font/fontello/fontello.ttf') format('truetype');
+  font-weight: normal;
+  font-style: normal;
+}
+
 form {
     text-align: center;
     padding-top: 10px;
@@ -54,7 +61,7 @@ form {
 #AddTaskButton {
     border: 1px solid #a0a0a0;
     font-size: medium;
-    font-family: TitilliumWeb, sans-serif;
+    font-family: fontello, sans-serif;
     line-height: 40px;
     height: 40px;
     width: 40px;
@@ -67,13 +74,37 @@ form {
     border: 1px solid #a0a0a0;
     border-radius: 0px 4px 4px 0px;
     font-size: medium;
-    font-family: TitilliumWeb, sans-serif;
+    font-family: fontello, sans-serif;
     line-height: 40px;
     height: 40px;
     width: 40px;
     margin: -3px;
     padding: 0px;
     vertical-align: middle;
+}
+
+#AddTaskButton:before {
+    content: '\e801';
+    font-size: large;
+    color: #505050;
+}
+
+#TrackTimeButton:before {
+    content: '\e800';
+    font-size: x-large;
+    color: #505050;
+}
+
+#AddTaskButton:hover:before {
+    content: '\e801';
+    font-size: large;
+    color: black;
+}
+
+#TrackTimeButton:hover:before {
+    content: '\e800';
+    font-size: x-large;
+    color: black;
 }
 
 button {
