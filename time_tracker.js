@@ -138,12 +138,12 @@ function ActivateTask( TaskID )
 //------------------------------------------------------------------------------
 function DeactivateTask( TaskID )
 {
-    var TotElapsedTime = 0,
-        Task     = {},
-        TaskArr  = [],
-        TaskObj  = $( '#' + TaskID ),
-        Timestamp = 0,
-        CloseObj = TaskObj.parent().find( '#' + TaskID + '_remove' );
+    var TaskArr        = RetrieveTaskArr(),
+        Task           = TaskArr[TaskID],
+        TaskObj        = $( '#' + TaskID ),
+        Timestamp      = parseInt( Task.Timestamp ),
+        TotElapsedTime = parseInt( Task.TotElapsedTime ),
+        CloseObj       = TaskObj.parent().find( '#' + TaskID + '_remove' );
 
     if ( TaskObj.hasClass('task_current_mouseover') )
     {
@@ -159,10 +159,8 @@ function DeactivateTask( TaskID )
     CloseObj.removeClass( 'close_task_div_active' )
             .addClass( 'close_task_div_inactive' );
 
-    TaskArr = RetrieveTaskArr();
-    Task = TaskArr[TaskID];
-    Timestamp = parseInt( Task.Timestamp );
-    TotElapsedTime = parseInt( Task.TotElapsedTime );
+    // Update the total elapsed time.
+
     Task.TotElapsedTime = ( TotElapsedTime + (Date.now()-Timestamp) ).toString();
     Task.ElapsedSince = "0";
     TaskArr[TaskID] = Task;
@@ -170,48 +168,44 @@ function DeactivateTask( TaskID )
 
 } // DeactivateTask
 
+
+//------------------------------------------------------------------------------
+//
+//  Convert some number of millisconds to hours, minutes, and seconds and return
+//  the converted value.
+//
+//------------------------------------------------------------------------------
 function ConvertMillisecondsToHoursMinsSecs( Milliseconds )
 {
     var NumMillisecondsInHour   = 3600000,
         NumMillisecondsInMinute = 60000,
         NumMillisecondsInSecond = 1000,
-        Hours     = 0,
-        Minutes   = 0,
-        Seconds   = 0,
-        Remainder = 0;
-
-  //  if ( Milliseconds === 0 )
-  //  {
-  //      return( { 'Hours'  : 0,
-  //                'Minutes': 0,
-  //                'Seconds': 0 } );
-  //  }
+        Hours   = 0,
+        Minutes = 0,
+        Seconds = 0;
 
     if ( Milliseconds >= NumMillisecondsInHour )
     {
-        Hours     = Math.floor( Milliseconds / NumMillisecondsInHour );
-        Remainder = Milliseconds % NumMillisecondsInHour;
-    }
-    else
-    {
-        Remainder = Milliseconds;
+        Hours = Math.floor( Milliseconds / NumMillisecondsInHour );
+        Milliseconds %= NumMillisecondsInHour;
     }
     
-    if ( Remainder >= NumMillisecondsInMinute )
+    if ( Milliseconds >= NumMillisecondsInMinute )
     {
-        Minutes   = Math.floor( Remainder / NumMillisecondsInMinute );
-        Remainder = Remainder % NumMillisecondsInMinute;
+        Minutes = Math.floor( Milliseconds / NumMillisecondsInMinute );
+        Milliseconds %= NumMillisecondsInMinute;
     }
 
-    if ( Remainder >= NumMillisecondsInSecond )
+    if ( Milliseconds >= NumMillisecondsInSecond )
     {
-        Seconds = Math.round( Remainder / NumMillisecondsInSecond );
+        Seconds = Math.round( Milliseconds / NumMillisecondsInSecond );
     }
 
     return( { 'Hours'  : Hours,
               'Minutes': Minutes,
               'Seconds': Seconds } );
-}
+
+} // ConvertMillisecondsToHoursMinsSecs
 
 
 //------------------------------------------------------------------------------
@@ -254,25 +248,13 @@ function StartTimer( event )
         //  User clicked on a task other than the current task.  Start the timer
         //  and record which task is the current one.
         IntervalID = setInterval(function() {
-            var TotElapsedTime   = 0,
-                HoursMinsSecs = {},
-                Interval      = 0,
-                TaskArr_JSON  = '',
-                TaskArr       = {},
-                TaskSeconds   = 0,
-                TaskMinutes   = 0,
-                TaskHours     = 0,
-                TaskTimestamp = 0,
-                Task,
-                Timer = $this.find( '#' + TaskID + '_timer' );
-
-            TaskArr       = RetrieveTaskArr();
-            Task          = TaskArr[TaskID];
-            //TaskSeconds   = parseInt(Task.Seconds);
-            //TaskMinutes   = parseInt(Task.Minutes);
-            //TaskHours     = parseInt(Task.Hours);
-            TotElapsedTime   = parseInt(Task.TotElapsedTime);
-            TaskTimestamp = parseInt(Task.Timestamp);
+            var HoursMinsSecs  = {},
+                Interval       = 0,
+                TaskArr        = RetrieveTaskArr( );
+                Task           = TaskArr[TaskID],
+                TotElapsedTime = parseInt(Task.TotElapsedTime),
+                TaskTimestamp  = parseInt(Task.Timestamp),
+                Timer          = $this.find( '#' + TaskID + '_timer' );
 
             //  How long has it been since the timer was started?
             Interval = Date.now() - TaskTimestamp;
@@ -280,35 +262,13 @@ function StartTimer( event )
             //  Convert the total running time, in ms, to hours/mins/secs.
             HoursMinsSecs = ConvertMillisecondsToHoursMinsSecs( Interval + TotElapsedTime );
 
-            //
-            //  Add one second to the timer.
-            //if ( TaskSeconds == 59 )
-            //{
-            //    TaskSeconds = 0;
-            //    if ( TaskMinutes == 59 )
-            //    {
-            //        TaskMinutes = 0;
-            //        TaskHours++;
-            //    }
-            //    else
-            //    {
-            //        TaskMinutes++;
-            //    }
-            //}
-            //else
-            //{
-            //    TaskSeconds++;
-            //}
-
-            //
             //  Update the timer in the DOM.
             Timer.text(HoursMinsSecs.Hours + ':' + HoursMinsSecs.Minutes + ':' + HoursMinsSecs.Seconds);
 
-            //
             //  Save, to DOM local storage, how much time has passed since the
             //  timer was last started so that, if the window is closed while
             //  the timer is still running, we can properly restore the task
-            //  when the page is re-opened.
+            //  when the page is re-loaded.
             Task.ElapsedSince = Interval.toString();
             TaskArr[TaskID] = Task;
             SaveTaskArr( TaskArr );
@@ -341,19 +301,16 @@ function RemoveTask( event )
 {
     var $this     = $(this),
         DivID     = $this.attr('id'),
-        TaskArr,
+        TaskArr   = RetrieveTaskArr(),
         TaskDelim = DivID.indexOf('_'),
         TaskID    = DivID.substring(0, TaskDelim);
 
-    //
     //  Remove the Task from DOM storage.
-    TaskArr = RetrieveTaskArr();
     delete TaskArr[TaskID];
     SaveTaskArr( TaskArr );
 
     if ( localStorage.CurrentTaskID == TaskID )
     {
-        //
         //  If the task we're removing is the CurrentTaskID,
         //  stop the timer and clear the related IntervalID.
         clearInterval( IntervalID );
@@ -361,7 +318,6 @@ function RemoveTask( event )
         localStorage.setItem( 'CurrentTaskID', -1 );
     }
 
-    //
     //  By removing the parent DIV, we remove the entire task from the DOM.
     $this.parent().remove();
 
@@ -461,9 +417,9 @@ function AddTask( TaskID, Task )
     {
         Time = parseInt( Task.TotElapsedTime ) + parseInt( Task.ElapsedSince );
         Task.TotElapsedTime = Time.toString();
-        Task.ElapsedSince = "0";
-        Task.Timestamp = "0";
-        TaskArr[TaskID] = Task;
+        Task.ElapsedSince   = "0";
+        Task.Timestamp      = "0";
+        TaskArr[TaskID]     = Task;
         SaveTaskArr( TaskArr );
     }
 
@@ -522,6 +478,7 @@ function AddTask( TaskID, Task )
 
 } // AddTask 
 
+
 //------------------------------------------------------------------------------
 //
 //  The 'drop' event handler for each drop target. Each task chiclet has a drop
@@ -562,6 +519,7 @@ function dropOnTarget( event )
     return( false );
 }
 
+
 //------------------------------------------------------------------------------
 //
 //  When a task is dragged over a drop target, enlarge the target—via CSS—to
@@ -578,6 +536,7 @@ function activateDropTarget( event )
 	return false;
 }
 
+
 //------------------------------------------------------------------------------
 //
 //  Shrink a drop target when a 'dragleave' event occurs.
@@ -592,6 +551,7 @@ function deactivateDropTarget( event )
 
 	return false;
 }
+
 
 //------------------------------------------------------------------------------
 //
