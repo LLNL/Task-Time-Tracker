@@ -2,6 +2,8 @@
 
 This web app will allow you to track the time you spend on various tasks.  It allows for definition of arbitrary tasks and quick transitions between tasks.  The app doesn't require an Internet connection; it runs solely in your browser without the need to contact any remote web servers.
 
+Many studies have shown that humans aren't good at multitasking. In deference to our serially-threaded natures, this software only allows one active task at a time. This design allows you to fully focus on the task at hand.
+
 # A Primer #
 
 The UI for the Task Timer program aims for simplicity.  In this case, a picture is sufficient to explain how to use the program:
@@ -12,10 +14,10 @@ The UI for the Task Timer program aims for simplicity.  In this case, a picture 
 
 There are two installation options:
 
-* This software is tracked in a Git repo hosted by Bitbucket (this website).  Clone the repo and checkout the stable branch.
-* If the above option is gibberish, click the link the the sidebar to the left called *Downloads*, select the tab called *Tags*, and download the most recent version. 
+* This software is tracked in a Git repo hosted by GitHub (this website).  Clone the repo and checkout the _stable_ branch.
+* If the above option is gibberish, click the link in the toolbar at the top named __*x* releases__, select the most release, and download the source in your format of choice. 
 
-Once you have downloaded—either via Git or a good ol' download—the program to your computer, open the newly downloaded file called **time_tracker.html**.
+Once you have obtained the source—either via Git or a good ol' download—open the newly downloaded file called **time_tracker.html**.
 
 # Supported Browsers #
 
