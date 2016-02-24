@@ -15,7 +15,7 @@ The UI for the Task Timer program aims for simplicity.  In this case, a picture 
 There are two installation options:
 
 * This software is tracked in a Git repo hosted by GitHub (this website).  Clone the repo and checkout the _stable_ branch.
-* If the above option is gibberish, click the link in the toolbar at the top named __*x* releases__, select the most release, and download the source in your format of choice. 
+* If the above option is gibberish, click the link in the toolbar at the top named __*x* releases__, select the most recent release, and download the source in your format of choice. 
 
 Once you have obtained the source—either via Git or a good ol' download—open the newly downloaded file called **time_tracker.html**.
 
