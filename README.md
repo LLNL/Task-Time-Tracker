@@ -1,4 +1,4 @@
-![Time Tracker Logo](https://bytebucket.org/gcleary/time-tracker/wiki/logo.png?token=c68132f516be369e2ee218c1842963302f4ab2bb)
+![Time Tracker Logo](/images/logo.png?raw=true)
 
 This web app will allow you to track the time you spend on various tasks.  It allows for definition of arbitrary tasks and quick transitions between tasks.  The app doesn't require an Internet connection; it runs solely in your browser without the need to contact any remote web servers.
 
@@ -8,7 +8,7 @@ Many studies have shown that humans aren't good at multitasking. In deference to
 
 The UI for the Task Timer program aims for simplicity.  In this case, a picture is sufficient to explain how to use the program:
 
-![A screenshot of the program's UI.](https://bytebucket.org/gcleary/time-tracker/wiki/UI.png?token=35f47d092208b5edcd02f8721ba4633df6d0c108)
+![A screenshot of the program's UI.](/images/UI.png?raw=true)
 
 # Installation & Use #
 
