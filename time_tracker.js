@@ -163,6 +163,7 @@ function DeactivateTask( TaskID )
 
     Task.TotElapsedTime = ( TotElapsedTime + (Date.now()-Timestamp) ).toString();
     Task.ElapsedSince = "0";
+    Task.TaskActive = false;
     TaskArr[TaskID] = Task;
     SaveTaskArr( TaskArr );
 
@@ -241,6 +242,7 @@ function StartTimer( event )
         // TaskArr[TaskID].Timestamp = Date.now().toString()?
         Task = TaskArr[TaskID];
         Task.Timestamp = Date.now().toString();
+        Task.TaskActive = true;
         TaskArr[TaskID] = Task;
         SaveTaskArr( TaskArr );
 
@@ -396,10 +398,12 @@ function AddTask( TaskID, Task )
 		DropDiv,
         HoursMinsSecs = {},
         MainTaskDiv,
+        Now,
         TaskDiv,
         TaskArr_JSON,
         TaskArr = RetrieveTaskArr(),
-        Time = 0;
+        Time = 0,
+        TimeSinceLastActivation = 0;
 
     //
     //  If we haven't yet run across this task, save it into local DOM
@@ -415,8 +419,27 @@ function AddTask( TaskID, Task )
     // Recover a timer that was running when the page was last closed.
     if ( parseInt(Task.ElapsedSince) > 0 )
     {
-        Time = parseInt( Task.TotElapsedTime ) + parseInt( Task.ElapsedSince );
-        Task.TotElapsedTime = Time.toString();
+        if ( ! Task.TaskActive )
+        {
+            Time = parseInt( Task.TotElapsedTime ) + parseInt( Task.ElapsedSince );
+            Task.TotElapsedTime = Time.toString();
+        }
+        else
+        {
+            // An active task's state is a bit different than any of the
+            // inactive tasks. The task's timestamp remains set to the time at
+            // which the task was clicked/activated. The TotElapsedTime shows
+            // how much time has occurred prior to the most recent activation.
+            // So, for tasks that were active, determine how much time has elapsed
+            // between now and the task's activation and add in the elapsed time.
+            // That's the time to use when rebuilding the task chiclet and adding
+            // it to the DOM.
+
+            Now = new Date();
+            TimeSinceLastActivation = Now - parseInt( Task.Timestamp );
+            Task.TotElapsedTime = parseInt( Task.TotElapsedTime ) +
+                                  TimeSinceLastActivation;
+        }
         Task.ElapsedSince   = "0";
         Task.Timestamp      = "0";
         TaskArr[TaskID]     = Task;
@@ -593,7 +616,8 @@ function SubmitTask( event )
                       { 'Name'          : TaskName,
                         'Timestamp'     : 0,
                         'TotElapsedTime': 0,
-                        'ElapsedSince'  : 0 } );
+                        'ElapsedSince'  : 0,
+                        'TaskActive'    : false } );
 
             if ( StartTimer == 1 )
             {
@@ -661,6 +685,13 @@ $(document).ready(function() {
             //  Set the global ID to one larger than the largest Task ID that we
             //  found in in local DOM storage.
             ID = TaskID_int + 1;
+        }
+
+        // If the task was active, reactivate it via a simulated click
+
+        if ( TaskArr[TaskID].TaskActive == true )
+        {
+            $( '#' + TaskID ).trigger( 'click' );
         }
     }
 
